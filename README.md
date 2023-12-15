@@ -9,7 +9,7 @@ Creating a repository of helpful documentation for all things Python.
 | Python | Pandas | [Link](https://pandas.pydata.org/docs/) | 🚧
 | Python | NumPy | [Link](https://numpy.org/doc/stable/) | 🚧
 | Python | PySpark | [Link](https://spark.apache.org/docs/latest/api/python/) | 🚧
-| Machine Learning | Scikit-learn(https://github.com/mattamx/Python_guides/blob/8525120156965ceaaddaf43079eef1f1ec45c93a/Machine%20Learning/Scikit-learn.md) | [Link](https://scikit-learn.org/stable/index.html) | 🚧
+| Machine Learning | [Scikit-learn](https://github.com/mattamx/Python_guides/blob/8525120156965ceaaddaf43079eef1f1ec45c93a/Machine%20Learning/Scikit-learn.md) | [Link](https://scikit-learn.org/stable/index.html) | ✔️
 | Deep Learning | PyTorch | [Link](https://pytorch.org/docs/stable/index.html) | 🚧
 | Neural Networks | Keras | [Link](https://keras.io/getting_started/) | 🚧
 | Natural Language Processing | spaCy | [Link](https://spacy.io/usage#quickstart) | 🚧
