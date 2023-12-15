@@ -1,6 +1,6 @@
-# Python_guides 🚧
+# DataScience_guides 🚧
 
-Creating a repository of helpful documentation for all things Python.
+Creating a repository of helpful documentation for all things Data Science.
 
 | Category | Guide | Documentation | Status
 | :---------------: | :---------------: | :---------------: | :---------------:
