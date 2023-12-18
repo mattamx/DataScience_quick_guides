@@ -9,6 +9,7 @@ Creating a repository of helpful documentation for all things Data Science.
 | Python | Pandas | [Link](https://pandas.pydata.org/docs/) | 🚧
 | Python | NumPy | [Link](https://numpy.org/doc/stable/) | 🚧
 | Python | PySpark | [Link](https://spark.apache.org/docs/latest/api/python/) | 🚧
+| SQL | BigQuery | [Link](https://cloud.google.com/bigquery/docs) | 🚧
 | Linear Algebra | [SciPy](https://github.com/mattamx/DataScience_guides/blob/3e83fb1e272237501dae23606c0e8cc83d7a97fa/Linear%20Algebra/SciPy.md) | [Link](https://docs.scipy.org/doc/scipy/) | ✔️
 | Machine Learning | [Scikit-learn](https://github.com/mattamx/Python_guides/blob/8525120156965ceaaddaf43079eef1f1ec45c93a/Machine%20Learning/Scikit-learn.md) | [Link](https://scikit-learn.org/stable/index.html) | ✔️
 | Deep Learning | PyTorch | [Link](https://pytorch.org/docs/stable/index.html) | 🚧
