@@ -201,3 +201,37 @@ popular_comments = query_job.to_dataframe()
 # Print the first five rows of the DataFrame
 popular_comments.head()
 ```
+
+#### Note on using Group By
+Note that because it tells SQL how to apply aggregate functions (like **COUNT()**), it doesn't make sense to use **GROUP BY** without an aggregate function. Similarly, if you have any **GROUP BY** clause, then all variables must be passed to either a
+
+1. **GROUP BY** command, or
+2. an aggregation function.
+   
+Consider the query below:
+```python
+query_good = """
+             SELECT parent, COUNT(id)
+             FROM `bigquery-public-data.hacker_news.comments`
+             GROUP BY parent
+             """
+```
+
+Note that there are two variables: `parent` and `id`.
+
+- `parent` was passed to a **GROUP BY** command (in `GROUP BY parent`), and
+- `id` was passed to an aggregate function (in `COUNT(id)`).
+
+And this query won't work, because the `author` column isn't passed to an aggregate function or a **GROUP BY** clause:
+```python
+query_bad = """
+            SELECT author, parent, COUNT(id)
+            FROM `bigquery-public-data.hacker_news.comments`
+            GROUP BY parent
+            """
+```
+
+If make this error, you'll get the error message `SELECT list expression references column (column's name) which is neither grouped nor aggregated at`.
+
+
+
