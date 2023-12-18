@@ -114,7 +114,7 @@ variable = query_job.to_dataframe()
 ```
 
 ### Working with big datasets
-To begin,you can estimate the size of any query before running it. Here is an example using the (*very large!*) Hacker News dataset. To see how much data a query will scan, we create a `QueryJobConfig` object and set the `dry_run` parameter to True.
+To begin, you can estimate the size of any query before running it. Here is an example using the (*very large!*) Hacker News dataset. To see how much data a query will scan, we create a `QueryJobConfig` object and set the `dry_run` parameter to True.
 ```python
 # Query to get the score column from every row where the type column has value "job"
 query = """
@@ -143,4 +143,61 @@ safe_query_job = client.query(query, job_config=safe_config)
 
 # API request - try to run the query, and return a pandas DataFrame
 safe_query_job.to_dataframe()
+```
+### Group By, Having & Count
+We'll work with the `comments` table and begin by printing the first few rows.
+```python
+from google.cloud import bigquery
+
+# Create a "Client" object
+client = bigquery.Client()
+
+# Construct a reference to the "hacker_news" dataset
+dataset_ref = client.dataset("hacker_news", project="bigquery-public-data")
+
+# API request - fetch the dataset
+dataset = client.get_dataset(dataset_ref)
+
+# Construct a reference to the "comments" table
+table_ref = dataset_ref.table("comments")
+
+# API request - fetch the table
+table = client.get_table(table_ref)
+
+# Preview the first five lines of the "comments" table
+client.list_rows(table, max_results=5).to_dataframe()
+```
+
+Let's use the table to see which comments generated the most replies. Since:
+
+- the `parent` column indicates the comment that was replied to, and
+- the `id` column has the unique ID used to identify each comment,
+
+we can **GROUP BY** the parent column and **COUNT()** the id column in order to figure out the number of comments that were made as responses to a specific comment.
+
+Furthermore, since we're only interested in popular comments, we'll look at comments with more than ten replies. So, we'll only return groups **HAVING** more than ten ID's.
+
+```python
+# Query to select comments that received more than 10 replies
+query_popular = """
+                SELECT parent, COUNT(id)
+                FROM `bigquery-public-data.hacker_news.comments`
+                GROUP BY parent
+                HAVING COUNT(id) > 10
+                """
+```
+
+Now that our query is ready, let's run it and store the results in a pandas DataFrame:
+
+```python
+# Set up the query (cancel the query if it would use too much of 
+# your quota, with the limit set to 10 GB)
+safe_config = bigquery.QueryJobConfig(maximum_bytes_billed=10**10)
+query_job = client.query(query_popular, job_config=safe_config)
+
+# API request - run the query, and convert the results to a pandas DataFrame
+popular_comments = query_job.to_dataframe()
+
+# Print the first five rows of the DataFrame
+popular_comments.head()
 ```
