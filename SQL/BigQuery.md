@@ -233,5 +233,32 @@ query_bad = """
 
 If make this error, you'll get the error message `SELECT list expression references column (column's name) which is neither grouped nor aggregated at`.
 
+### Analytic Functions
+Analytic functions allow us to perform complex calculations with relatively straightforward syntax. For instance, we can quickly calculate moving averages and running totals, among other quantities.
 
+#### Syntax
+To understand how to write analytic functions, we'll work with a small table containing data from two different people who are training for a race. The `id` column identifies each runner, the `date` column holds the day of the training session, and time shows the `time` (in minutes) that the runner dedicated to training. Say we'd like to calculate a moving average of the training times for each runner, where we always take the average of the current and previous training sessions. We can do this with the following query:
+![image](https://github.com/mattamx/DataScience_guides/assets/107958646/428a5380-3017-4462-972d-a78e42b7f06c)
+
+
+All analytic functions have an **OVER** clause, which defines the sets of rows used in each calculation. The **OVER** clause has three (optional) parts:
+
+- The **PARTITION BY** clause divides the rows of the table into different groups. In the query above, we divide by `id` so that the calculations are separated by runner.
+- The **ORDER BY** clause defines an ordering within each partition. In the sample query, ordering by the `date` column ensures that earlier training sessions appear first.
+- The final clause (ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) is known as a **window frame** clause. It identifies the set of rows used in each calculation. We can refer to this group of rows as a **window**. (Actually, analytic functions are sometimes referred to as **analytic window functions** or simply **window functions**!)
+
+![image](https://github.com/mattamx/DataScience_guides/assets/107958646/7ce82c0d-5f7a-47b1-aaee-f9af6e9bf756)
+
+#### (More on) window frame clauses¶
+
+There are many ways to write window frame clauses:
+
+- `ROWS BETWEEN 1 PRECEDING AND CURRENT ROW` - the previous row and the current row.
+- `ROWS BETWEEN 3 PRECEDING AND 1 FOLLOWING` - the 3 previous rows, the current row, and the following row.
+- `ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING` - all rows in the partition.
+
+Of course, this is not an exhaustive list, and you can imagine that there are many more options! In the code below, you'll see some of these clauses in action.
+
+#### Three types of analytic functions¶
+The example above uses only one of many analytic functions. BigQuery supports a wide variety of analytic functions, and we'll explore a few here. For a complete listing, you can take a look at the [documentation](https://cloud.google.com/bigquery/docs/reference/standard-sql/analytic-function-concepts).
 
