@@ -245,7 +245,7 @@ All analytic functions have an **OVER** clause, which defines the sets of rows u
 
 - The **PARTITION BY** clause divides the rows of the table into different groups. In the query above, we divide by `id` so that the calculations are separated by runner.
 - The **ORDER BY** clause defines an ordering within each partition. In the sample query, ordering by the `date` column ensures that earlier training sessions appear first.
-- The final clause (ROWS BETWEEN 1 PRECEDING AND CURRENT ROW) is known as a **window frame** clause. It identifies the set of rows used in each calculation. We can refer to this group of rows as a **window**. (Actually, analytic functions are sometimes referred to as **analytic window functions** or simply **window functions**!)
+- The final clause (`ROWS BETWEEN 1 PRECEDING AND CURRENT ROW`) is known as a **window frame** clause. It identifies the set of rows used in each calculation. We can refer to this group of rows as a **window**. (Actually, analytic functions are sometimes referred to as **analytic window functions** or simply **window functions**!)
 
 ![image](https://github.com/mattamx/DataScience_guides/assets/107958646/7ce82c0d-5f7a-47b1-aaee-f9af6e9bf756)
 
@@ -262,3 +262,21 @@ Of course, this is not an exhaustive list, and you can imagine that there are ma
 #### Three types of analytic functions¶
 The example above uses only one of many analytic functions. BigQuery supports a wide variety of analytic functions, and we'll explore a few here. For a complete listing, you can take a look at the [documentation](https://cloud.google.com/bigquery/docs/reference/standard-sql/analytic-function-concepts).
 
+##### 1) Analytic aggregate functions¶
+As you might recall, **AVG()** (from the example above) is an aggregate function. The **OVER** clause is what ensures that it's treated as an analytic (aggregate) function. **Aggregate functions** take all of the values within the window as input and return a single value.
+
+- **MIN()** (or **MAX()**) - Returns the minimum (or maximum) of input values
+- **AVG()** (or **SUM()**) - Returns the average (or sum) of input values
+- **COUNT()** - Returns the number of rows in the input
+
+##### 2) Analytic navigation functions¶
+**Navigation functions** assign a value based on the value in a (usually) different row than the current row.
+
+- **FIRST_VALUE()** (or **LAST_VALUE()**) - Returns the first (or last) value in the input
+- **LEAD()** (and **LAG()**) - Returns the value on a subsequent (or preceding) row
+
+##### 3) Analytic numbering functions¶
+**Numbering functions** assign integer values to each row based on the ordering.
+
+- **ROW_NUMBER()** - Returns the order in which rows appear in the input (starting with 1)
+- **RANK()** - All rows with the same value in the ordering column receive the same rank value, where the next row receives a rank value which increments by the number of rows with the previous rank value.
