@@ -303,7 +303,7 @@ show_amount_of_data_scanned(star_query)
 basic_query = "SELECT size, binary FROM `bigquery-public-data.github_repos.contents`"
 show_amount_of_data_scanned(basic_query)
 ```
-```python
+```
 Data processed: 2682.118 GB
 Data processed: 2.531 GB
 ```
@@ -335,8 +335,71 @@ less_data_query = """
                   """
 show_amount_of_data_scanned(less_data_query)
 ```
-```python
+```
 Data processed: 0.076 GB
 Data processed: 0.06 GB
 ```
 Since there is a 1:1 relationship between the station ID and the station name, we don't need to use the `start_station_id` and `end_station_id` columns in the query. By using only the columns with the station IDs, we scan less data.
+
+##### 3) Avoid N:N JOINs.
+Most of the JOINs that you have executed in this course have been **1:1 JOINs**. In this case, each row in each table has at most one match in the other table.
+
+![image](https://github.com/mattamx/DataScience_guides/assets/107958646/06804ec9-fdfd-43bd-896d-0903e7c200f7)
+
+Another type of JOIN is an **N:1 JOIN**. Here, each row in one table matches potentially many rows in the other table.
+
+![image](https://github.com/mattamx/DataScience_guides/assets/107958646/54e48221-dfb6-42f6-a191-80a46d1f6645)
+
+Finally, an **N:N JOIN** is one where a group of rows in one table can match a group of rows in the other table. Note that in general, all other things equal, this type of JOIN produces a table with many more rows than either of the two (original) tables that are being JOINed.
+
+![image](https://github.com/mattamx/DataScience_guides/assets/107958646/39111364-232a-43a7-acc9-f94e1e47e414)
+
+Now we'll work with an example from a real dataset. Both examples below count the number of distinct committers and the number of files in several GitHub repositories.
+
+```python
+les in several GitHub repositories.
+
+big_join_query = """
+                 SELECT repo,
+                     COUNT(DISTINCT c.committer.name) as num_committers,
+                     COUNT(DISTINCT f.id) AS num_files
+                 FROM `bigquery-public-data.github_repos.commits` AS c,
+                     UNNEST(c.repo_name) AS repo
+                 INNER JOIN `bigquery-public-data.github_repos.files` AS f
+                     ON f.repo_name = repo
+                 WHERE f.repo_name IN ( 'tensorflow/tensorflow', 'facebook/react', 'twbs/bootstrap', 'apple/swift', 'Microsoft/vscode', 'torvalds/linux')
+                 GROUP BY repo
+                 ORDER BY repo
+                 """
+show_time_to_run(big_join_query)
+
+small_join_query = """
+                   WITH commits AS
+                   (
+                   SELECT COUNT(DISTINCT committer.name) AS num_committers, repo
+                   FROM `bigquery-public-data.github_repos.commits`,
+                       UNNEST(repo_name) as repo
+                   WHERE repo IN ( 'tensorflow/tensorflow', 'facebook/react', 'twbs/bootstrap', 'apple/swift', 'Microsoft/vscode', 'torvalds/linux')
+                   GROUP BY repo
+                   ),
+                   files AS 
+                   (
+                   SELECT COUNT(DISTINCT id) AS num_files, repo_name as repo
+                   FROM `bigquery-public-data.github_repos.files`
+                   WHERE repo_name IN ( 'tensorflow/tensorflow', 'facebook/react', 'twbs/bootstrap', 'apple/swift', 'Microsoft/vscode', 'torvalds/linux')
+                   GROUP BY repo
+                   )
+                   SELECT commits.repo, commits.num_committers, files.num_files
+                   FROM commits 
+                   INNER JOIN files
+                       ON commits.repo = files.repo
+                   ORDER BY repo
+                   """
+
+show_time_to_run(small_join_query)
+```
+```
+Time to run: 13.028 seconds
+Time to run: 4.413 seconds
+```
+The first query has a large N:N JOIN. By rewriting the query to decrease the size of the JOIN, we see it runs much faster.
