@@ -357,8 +357,6 @@ Finally, an **N:N JOIN** is one where a group of rows in one table can match a g
 Now we'll work with an example from a real dataset. Both examples below count the number of distinct committers and the number of files in several GitHub repositories.
 
 ```python
-les in several GitHub repositories.
-
 big_join_query = """
                  SELECT repo,
                      COUNT(DISTINCT c.committer.name) as num_committers,
