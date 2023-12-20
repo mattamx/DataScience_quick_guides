@@ -280,3 +280,63 @@ As you might recall, **AVG()** (from the example above) is an aggregate function
 
 - **ROW_NUMBER()** - Returns the order in which rows appear in the input (starting with 1)
 - **RANK()** - All rows with the same value in the ordering column receive the same rank value, where the next row receives a rank value which increments by the number of rows with the previous rank value.
+
+### Writing Efficient Queries
+Most database systems have a **query optimizer** that attempts to interpret/execute your query in the most effective way possible. But several strategies can still yield huge savings in many cases.
+
+##### Some useful functions
+We will use two functions to compare the efficiency of different queries:
+
+- `show_amount_of_data_scanned()` shows the amount of data the query uses.
+- `show_time_to_run()` prints how long it takes for the query to execute.
+
+#### Strategies
+##### 1) Only select the columns you want.
+It is tempting to start queries with **SELECT * FROM**.... It's convenient because you don't need to think about which columns you need. But it can be very inefficient.
+
+This is especially important if there are text fields that you don't need, because text fields tend to be larger than other fields.
+
+```python
+star_query = "SELECT * FROM `bigquery-public-data.github_repos.contents`"
+show_amount_of_data_scanned(star_query)
+
+basic_query = "SELECT size, binary FROM `bigquery-public-data.github_repos.contents`"
+show_amount_of_data_scanned(basic_query)
+```
+```python
+Data processed: 2682.118 GB
+Data processed: 2.531 GB
+```
+In this case, we see a 1000X reduction in data being scanned to complete the query, because the raw data contained a text field that was 1000X larger than the fields we might need.
+
+##### 2) Read less data.
+Both queries below calculate the average duration (in seconds) of one-way bike trips in the city of San Francisco.
+
+```python
+more_data_query = """
+                  SELECT MIN(start_station_name) AS start_station_name,
+                      MIN(end_station_name) AS end_station_name,
+                      AVG(duration_sec) AS avg_duration_sec
+                  FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+                  WHERE start_station_id != end_station_id 
+                  GROUP BY start_station_id, end_station_id
+                  LIMIT 10
+                  """
+show_amount_of_data_scanned(more_data_query)
+
+less_data_query = """
+                  SELECT start_station_name,
+                      end_station_name,
+                      AVG(duration_sec) AS avg_duration_sec                  
+                  FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+                  WHERE start_station_name != end_station_name
+                  GROUP BY start_station_name, end_station_name
+                  LIMIT 10
+                  """
+show_amount_of_data_scanned(less_data_query)
+```
+```python
+Data processed: 0.076 GB
+Data processed: 0.06 GB
+```
+Since there is a 1:1 relationship between the station ID and the station name, we don't need to use the `start_station_id` and `end_station_id` columns in the query. By using only the columns with the station IDs, we scan less data.
