@@ -121,6 +121,50 @@ Smalles to largest: "paper", "notebook", "talk", "poster"
 sns.set_context()
 ```
 
+# Titles and labels
+## FacetGrid vs AxesSubplot objects
+| Object Type | Plot Types | Characteristics |  
+| ------- | ------- | ------- | 
+| `FacetGrid` |  `relplot()`, `catplot()` | Can create subplots | 
+| `AxesSubplot` | `scatterplot()`, `countplot()`, etc. | Only creates a single plot | 
 
+```python
+g = sns.scatterplot(x='column_name', y='column_name', data=df)
+type(g) # AxesSubplot
+```
 
+### Titles
+```python
+# FacetGrid
+g = sns.scatterplot(x='column_name', y='column_name', data=df, kind='box')
+g.fig.suptitle('New Title',
+              y='number' # adjusts height
+              )
+```
 
+```python
+# AxesSubplot
+g = sns.scatterplot(x='column_name', y='column_name', data=df)
+g.set_suptitle('New Title',
+              y='number' # adjusts height
+              )
+```
+
+```python
+g = sns.catplot(x='column_name', y='column_name', data=df, kind='box', col='column_name)
+g.fig.suptitle('New Title',
+              y='number' # adjusts height
+              )
+g.set_titles('This is {column_name}') # sets titles for subplots
+```
+
+### Labels
+```python
+g = sns.catplot(x='column_name', y='column_name', data=df, kind='box')
+g.set(xlabel='New label', ylabel='New label')
+```
+
+```python
+g = sns.catplot(x='column_name', y='column_name', data=df, kind='box')
+plt.xticks(rotation='number') # rotates tick labels
+```
