@@ -48,3 +48,12 @@ sns.scatterplot(x='array1', y='array2',
                 palette=hue_colors)
 plt.show()
 ```
+
+## Relational plots
+Creating subplots in a single figure
+```python
+sns.relplot(x='array1', y='array2', data=df, kind='scatter or line',
+            col='column_name', col_wrap='number of columns per row', col_order=["list_of_values","list_of_values","list_of_values"],
+            row='column_name')
+plt.show()
+```
