@@ -92,3 +92,12 @@ sns.catplot(x='column_name', y='column_name', data=df, kind='box', order=['list'
             ) 
 plt.show()
 ```
+
+```python
+from numpy import median
+sns.catplot(x='column_name', y='column_name', data=df, kind='point', hue='column_name',
+            join='True or False',
+            estimator=median, # better statistic if data has many outliers
+            capsize='value', ci='None')
+plt.show()
+```
