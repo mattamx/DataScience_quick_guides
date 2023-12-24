@@ -101,3 +101,26 @@ sns.catplot(x='column_name', y='column_name', data=df, kind='point', hue='column
             capsize='value', ci='None')
 plt.show()
 ```
+
+# Style
+Five preset figure styles: "white", "dark", "whitegrid", "darkgrid", "ticks"
+```python
+sns.set_style()
+```
+
+Diverging palettes: "RdBu", "PRGn", "RdBu_r", "PRGn_r"
+- underscore reverses the palette
+
+Sequential palettes: "Greys", "Blues", "PuRd", "GnBu"
+```python
+sns.set_palette()
+```
+## Scale
+Smalles to largest: "paper", "notebook", "talk", "poster"
+```python
+sns.set_context()
+```
+
+
+
+
