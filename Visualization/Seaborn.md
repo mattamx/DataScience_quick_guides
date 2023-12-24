@@ -84,3 +84,11 @@ plt.show()
 sns.catplot(x='column_name', y='column_name', data=df, kind='bar', ci='None')
 plt.show()
 ```
+
+```python
+sns.catplot(x='column_name', y='column_name', data=df, kind='box', order=['list'],
+            sym=" ", # sym omits or changes appearance of outliers
+            whis= [lower, upper] # changing the whiskers
+            ) 
+plt.show()
+```
