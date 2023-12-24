@@ -52,8 +52,23 @@ plt.show()
 ## Relational plots
 Creating subplots in a single figure
 ```python
-sns.relplot(x='array1', y='array2', data=df, kind='scatter or line',
+sns.relplot(x='array1', y='array2', data=df, kind='scatter',
             col='column_name', col_wrap='number of columns per row', col_order=["list_of_values","list_of_values","list_of_values"],
-            row='column_name')
+            row='column_name', row_order=["list_of_values","list_of_values","list_of_values"])
+plt.show()
+```
+
+```python
+sns.relplot(x='array1', y='array2', data=df, kind='scatter',
+            size="quantitative or categorical variable", hue="quantitative or categorical variable",
+            style="column_name", alpha='value between 0 and 1')
+plt.show()
+```
+
+```python
+sns.relplot(x='array1', y='array2', data=df, kind='line',
+            hue="quantitative or categorical variable",
+            style="column_name", markers='True or False', dashes='True or False',
+            ci='sd or None') # sd = standard deviation
 plt.show()
 ```
