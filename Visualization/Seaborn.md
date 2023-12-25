@@ -176,3 +176,22 @@ for c in ax.containers:
     labels = [f'{(v.get_height()):.2f}%' for v in c]
     ax.bar_label(c, labels=labels, label_type='center', color='white')
 ```
+
+```python
+g = sns.countplot(data=df,
+                  x='column_name',
+                  hue='column_name',
+                  ax=ax,
+                  dodge=False
+                  )
+bottoms = {}
+for bars in ax.containers:
+    for bar in bars:
+        x, y = bar.get_xy()
+        h = bar.get_height()
+        if x in bottoms:
+            bar.set_y(bottoms[x])
+            bottoms[x] += h
+        else:
+            bottoms[x] = h
+```
