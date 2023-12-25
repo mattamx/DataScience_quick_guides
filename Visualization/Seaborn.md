@@ -168,3 +168,11 @@ g.set(xlabel='New label', ylabel='New label')
 g = sns.catplot(x='column_name', y='column_name', data=df, kind='box')
 plt.xticks(rotation='number') # rotates tick labels
 ```
+
+Adding data labels
+```python
+ax = g.facet_axis(0, 0)
+for c in ax.containers:
+    labels = [f'{(v.get_height()):.2f}%' for v in c]
+    ax.bar_label(c, labels=labels, label_type='center', color='white')
+```
