@@ -203,11 +203,12 @@ df['index_as_col'] = df.index
 df1[['b','c']] = df2[['e','f']]
 df3 = df1.append(other=df2)
 ```
-
+Swap column contents - change colum order
 ```python
-# Swap column contents - change colum order
 df[['B','A']] = df[['A','B']]
-# Dropping columns
+```
+Dropping columns
+```python
 df = df.drop('col1', axis=1)
 df.drop('col1', axis=1, inplace=True)
 df = df.drop(['col1', 'col2'], axis=1)
@@ -224,12 +225,13 @@ df['percent'] = df['proportion'] * 100
 df['log_data'] = np.log(df['col1'])
 df['rounded'] = np.round(df['col2'], 2)
 ```
-
+Columns set based on criteria
 ```python
-# Columns set based on criteria
 df['b'] = df['a'].where(df['a'] > 0, other = 0)
 df['d'] = df['a'].where(df.b != 0, other = df.c)
-# Data type conversions
+```
+Data type conversions
+```python
 s = df['col'].astype(str) # Series type
 na = df['col'].values # numpy array
 pl = df['col'].tolist() # python list
@@ -249,9 +251,8 @@ value = df['col'].cov(df['col2'])
 s = df['col'].describe()
 s = df['col'].value_counts()
 ```
-
+Index label for mix/max values
 ```python
-# Index label for mix/max values
 label = df['col1'].idxmin()
 label = df['col1'].idxmax()
 ```
@@ -282,11 +283,163 @@ df = df.iloc[:, 0:2] # exclusive
 # Get interger pisition of a column index label
 j = df.columns.get_loc('col_name')
 ```
-
+## Working with Rows
+Get the row index and labels
 ```python
-
+idx = df.index # get row index
+label = df.index[0] # 1st row label
+lst = df.index.tolist() # get as a list
+```
+Change the (row) index
+```python
+df.index = idx # new adhoc index
+df.index = range(len(df)) # set with list
+df = df.reset_index() # replace old with new
+df['b'] = df # old index stored as a column in df
+df = df.reindex(index=range(len(df)))
+df = df.set_index(key=['r1', 'r2', 'etc'])
+df.rename(index={'old':'new'}, inplace=True)
+```
+Adding rows
+```python
+df = original_df.append(more_rows_in_df) # both DataFrames should have the same column labels
+```
+Dropping rows (by name)
+```python
+df = df.drop('row_label')
+df = df.drop(['row1','row2']) # multi-row
+```
+Boolean row selection by values in a column
+```python
+df = df[df['col2'] >= 0]
+df = df[(df['col3'] >= 1) | (df['col1'] < 0)]
+df = df[df['col2'].isin([1,2,5,7,11])]
+df = df[~df['col2'].isin([1,2,5,7,11])]
+df = df[df['col'].str.contains('helo')]
+```
+Selecting rows using isin() over multiple columns
+```python
+data = {1:[1,2,3], 2:[1,4,9], 3:[1,8,27]}
+df = pd.DataFrame(data)
+# multi-column isin()
+lf = {1:[1,3], 3:[8,27]} # look for
+f = df[df[list(lf)].isin(lf).all(axis=1)]
+# Selecting rows using an index
+idx = df[df['col'] >= 2].index
+print(df.ix[idx])
+```
+Select a slice of rows by integer position
+```python
+df = df[:] # copy DataFrame
+df = df[0:2] # rows 0 and 1
+df = df[-1:] # the last row
+df = df[2:3] # row 2 (the third row)
+df = df[:-1] # all but the last row
+df = df[::2] # every 2nd row (0 2 ..)
+# Selecting a slice of rows by label/index
+df = df['a':'c'] # rows 'a' through 'c' # doesn't work on integer labelled rows
+```
+Append a row of column totals to a DataFrame
+```python
+# Option 1: use dictionary comprehension
+sums = {col: df[col].sum() for col in df}
+sums_df = DataFrame(sums, index=['Total'])
+df.append(sums_df)
+# Option 2: All done with pandas
+df = df.append(DataFrame(df.sum(), columns=['Total']).T)
+```
+Iterating over DataFrame Rows
+```python
+for (index, row) in df.iterrows(): # pass
+```
+Sorting DataFrame rows values
+```python
+df = df.sort(df.columns[0], ascending=False)
+df.sort(['col1','col2'], inplace=True)
+```
+Random selection of rows
+```python
+import random as r
+k = 20 # pick a number
+selection = r.sample(range(len(df)), k)
+df_sample = df.iloc[selection,:]
 ```
 
+Sort DataFrame by its row index
 ```python
+df.sort_index(inplace=True) # sort by row
+df = df.sort_index(ascending=False)
+```
+Drop duplicates in the row index
+```python
+df['index'] = df.index # 1 create new column
+df = df.drop_duplicates(cols='index', take_last=True) # 2 use new column
+del df['index'] # 3 delete the column
+df.sort_index(inplace=True) # 4 tidy up
+```
+Test if two DataFrames have same row index
+```python
+len(a) == len(b) and all(a.index == b.index)
+```
+Get the integer prosition of a row and a col index label
+```python
+i = df.index.get_loc('row_label')
+```
+Get integer position of rows that meet condition
+```python
+a = np.where(df['col'] >= 2) # numpy array
+```
+## Working with Cells
+Selecting a cell by row and column labels
+```python
+value = df.at['row', 'col']
+value = df.loc['row', 'col']
+value = df['col'].at['row'] # tricky
 
+```
+Setting a cell by row and column labels
+```python
+df.at['row', 'col']
+df.loc['row', 'col']
+df['col'].at['row'] # tricky
+```
+Selecting and slicing on labels
+```python
+df = df.loc['row1':'row3', 'col1':'col3'] # inclusive
+```
+Setting a cross-section by labels
+```python
+df.loc['A':'C', 'col1':'col3'] = np.nan
+df.loc[1:2, 'col1':'col3'] = np.zeros((2,2))
+df.loc[1:2 , 'A':'C'] = othr.loc[1:2, 'A':'C']
+```
+Selecting a cell by integer position
+```python
+value = df.iat[9, 3] # [row,col]
+value = df.iloc[0, 0] # [row,col]
+value = df.iloc[len(df)-1, len(df.columns)-1]
+```
+Selecting a range of cells by int position
+```python
+df = df.iat[2:4, 2:4] # subset of the df
+df = df.iloc[:5, :5] # top left corner
+s = df.iloc[5, :] # return row as Series
+df = df.iloc[5:6, :] # return row as row
+```
+Setting cell by integer position
+```python
+df.iloc[0, 0] = value # [row,col]
+df.iat[7, 8] = value
+```
+Setting cell range by integer position
+```python
+df.iloc[0:3, 0:5] = value
+df.iloc[0:3, 0:5] = np.ones((2, 3))
+df.iloc[0:3, 0:5] = np.zeros((2, 3))
+df.iloc[0:3, 0:5] = np.array([[1, 1, 1], [2, 2, 2]])
+```
+.ix for mixed label and integer position indexing
+```python
+value = df.ix[5, 'col1']
+df = df.ix[1:5, 'col1':'col3']
 ```
