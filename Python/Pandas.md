@@ -169,3 +169,124 @@ df = df.filter(like='x') # keep x in col
 df = df.filter(regex='x') # regex in col
 df = df.select(crit-(lamba x: not x%5)) # rows
 ```
+## Working with Columns
+Column index and labels
+```python
+idx = df.columns # get col index
+label = df.columns[0] # 1st col label
+lst = df.columns.tolist() # get as a list
+# Change column labels
+df.rename(columns={'old':'new'}, inplace=True)
+df = df.rename(columns={'a':1, 'b':'x'})
+```
+Selecting columns
+```python
+s = df['colName'] # select col to Series
+df = df[['colName']] # select col to df
+df = df[['a', 'b']] # select 2 or more
+df = df[['c', 'a', 'b']] # change order
+s = df[df.columns[0]] # select by number
+df = df[df.columns[0, 3, 4]] # by number
+s = df.pop('c') # get col and drop from df
+# Selecting columns with Python attributes
+s = df.a # same as s = df['a']
+# cannot create new columns by attribute
+df.existing_col = df.a / df.b
+df['new_col'] = df.a / df.b
+```
+Adding new columns
+```python
+df['new_col'] = range(len(df))
+df['new_col'] = np.repeat(np.nan, len(df))
+df['random'] = np.random.rand(len(df))
+df['index_as_col'] = df.index
+df1[['b','c']] = df2[['e','f']]
+df3 = df1.append(other=df2)
+```
+
+```python
+# Swap column contents - change colum order
+df[['B','A']] = df[['A','B']]
+# Dropping columns
+df = df.drop('col1', axis=1)
+df.drop('col1', axis=1, inplace=True)
+df = df.drop(['col1', 'col2'], axis=1)
+s = df.pop('col') # drops from frame
+del col['col']
+df.drop(df.columns[0], inplace=True)
+```
+Arithmetic
+```python
+# Vectorized arithmetic on columns
+df['proportion'] = df['count'] / df['total']
+df['percent'] = df['proportion'] * 100
+# Apple numpy math functions to columns
+df['log_data'] = np.log(df['col1'])
+df['rounded'] = np.round(df['col2'], 2)
+```
+
+```python
+# Columns set based on criteria
+df['b'] = df['a'].where(df['a'] > 0, other = 0)
+df['d'] = df['a'].where(df.b != 0, other = df.c)
+# Data type conversions
+s = df['col'].astype(str) # Series type
+na = df['col'].values # numpy array
+pl = df['col'].tolist() # python list
+```
+Column-wide methods/attributes
+```python
+value = df['col'].dtype # type of data
+value = df['col'].size # col dimensions
+value = df['col'].count() # non-NA count
+value = df['col'].sum()
+value = df['col'].prod()
+value = df['col'].min()
+value = df['col'].max()
+value = df['col'].mean()
+value = df['col'].median()
+value = df['col'].cov(df['col2'])
+s = df['col'].describe()
+s = df['col'].value_counts()
+```
+
+```python
+# Index label for mix/max values
+label = df['col1'].idxmin()
+label = df['col1'].idxmax()
+```
+Element-wise methods
+```python
+s = df['col'].isnull()
+s = df['col'].notnull() # not isnull()
+s = df['col'].astype(float)
+s = df['col'].round(decimals=0)
+s = df['col'].diff(periods=1)
+s = df['col'].shift(periods=1)
+s = df['col'].to_datetime()
+s = df['col'].fillna(0) # replace NaN with 0
+s = df['col'].cumsum()
+s = df['col'].cumprod()
+s = df['col'].pct_change(periods=4)
+s = df['col'].rolling_sum(periods=4, window=4)
+```
+
+```python
+# Append column of row sums to a DataFrame
+df['Total'] = df.sum(axis=1)
+# Multiply every column in DataFrame by Series
+df = df.mul(s, axis=0) # on matched rows
+# Selecting columns with .loc, .iloc and .ix
+df = df.loc[:, 'col1':'col2'] # inclusive
+df = df.iloc[:, 0:2] # exclusive
+# Get interger pisition of a column index label
+j = df.columns.get_loc('col_name')
+```
+
+```python
+
+```
+
+```python
+
+```
