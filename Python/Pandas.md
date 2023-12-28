@@ -443,3 +443,103 @@ df.iloc[0:3, 0:5] = np.array([[1, 1, 1], [2, 2, 2]])
 value = df.ix[5, 'col1']
 df = df.ix[1:5, 'col1':'col3']
 ```
+
+## Joining/Combining DataFrames
+There are three ways to join two DataFrames:
+- merge (a database/SQL-like join operation)
+- concat (stack side by side or one on top of each other)
+- combine_first (splice the two together, choosing values from one over the other)
+
+Merge on indexes
+```python
+df_new = pd.merge(left=df1, right=df2, how='outer', left_index=True, right_index=True)
+# How: 'left', 'right', 'outer', 'inner'
+# How: outer = union/all; inner = intersection
+```
+Merge on columns
+```python
+df_new = pd.merge(left=df1, right=df2, how='left', left_on='col1', right_on='col2') # when joining on columns, the indexes on the passde DataFrame are ignored
+```
+Join on indexes
+```python
+# DataFrame.join() joins on indexes by default
+df_new = df1.join(other=df2, on='col1', how='outer')
+df_new = df1.join(other=df2, on=['a', 'b'], how='outer')
+```
+Concatenation
+```python
+df = pd.concat([df1,df2], axis=0) # top/bottom
+df = df1.append(df2,df3]) # top/bottom
+df = pd.concat([df1,df2], axis=1) # left/right
+# Can lead to duplicate rows or cols
+```
+Combine_first
+```python
+df = df1.combine_first(other=df2)
+# multi-combine with python reduce()
+df = reduce(lambda x, y: x_combine_first(y), [df1,df2,df3,df4,df5]) # index of the combined DataFrame will be the union of the indexes from df1 and df2
+```
+
+## Groupby: Split-Apply-Combine
+Grouping
+```python
+gb = df.groupby('cat') # by one column
+gb = df.groupby(['c1','c2']) # by 2 columns
+gb = df.groupby(level=0) # multi-index gb
+gb = df.groupby(level=['a','b']) # multi-index gb
+print(gb.groups) # contains a dictionary of mapping of the groups
+```
+Iterating groups
+```python
+for name, group in gb:
+  print(name)
+  print(group)
+```
+Selecting a group
+```python
+dfa = df.groupby('cat').get_group('a')
+dfb = df.groupby('cat').get_group('b')
+```
+Applying an aggregation function
+```python
+# apply to a column
+s = df.groupby('cat')['col1'].sum()
+s = df.groupby('cat')['col1'].agg(np.sum)
+# apply to every column in the DataFrame
+s = df.groupby('cat').agg(np.sum)
+df_summary = df.groupby('cat')['col1'].describe()
+df_row_1s = df.groupby('cat')['col1'].head(1)
+```
+Applying multiple aggregation functions
+```python
+gb = df.groupby('cat')
+# apply multiple functions to one column
+dfx = gb['col2'].agg([np.sum, np.meam])
+# apply multiple functions to multiple columns
+dfy = gb.agg({'cat': np.count_nonzero,
+              'col1': [np.sum, np.meam, np.std],
+              'col2': [np.min, np.max]
+              )
+```
+Transforming functions
+```python
+# tranform to group z-scores, which have a group mean of 0 and std dev of 1
+zscore = lambda x: (x-x.mean()) / x.std()
+dfx = df.groupby('cat').transform(zscore)
+# replace missing data with group mean
+mean_r = lambda x: x.fillna(x.mean())
+dfm = df.groupby('cat').transform(mean_r)
+```
+Applying filtering functions
+```python
+# Allows you to make selections based on whether each group meets specific criteria
+# select groups with more than 10 members
+eleven = lambda x: (len(x['col1']) >= 11)
+df11 = df.groupby('cat').filter(eleven)
+```
+Group by a row index (non-hierarchical)
+```python
+df = df.set_index(keys='cat')
+s = df.groupby(level=0)['col1'].sum()
+dfg = df.groupby(level=0).sum()
+```
