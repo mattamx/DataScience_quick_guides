@@ -1,4 +1,4 @@
-# DataScience_guides 🚧
+# DataScience_quick_guides 🚧
 
 Creating a repository of helpful documentation for all things Data Science.
 
@@ -6,7 +6,7 @@ Creating a repository of helpful documentation for all things Data Science.
 | :---------------: | :---------------: | :---------------: | :---------------:
 | Visualization | [Plotly](Visualization/Plotly.md) | [Link](https://matplotlib.org/2.0.0/index.html) | ✔️
 | Visualization | [Matplotlib](Visualization/Matplotlib.md) | [Link](https://plotly.com/python/plotly-express/) | ✔️
-| Visualization | [Seaborn](Visualization/Seaborn.md) | [Link](https://seaborn.pydata.org/index.html) | 🚧
+| Visualization | [Seaborn](Visualization/Seaborn.md) | [Link](https://seaborn.pydata.org/index.html) | ✔️
 | Python | [Pandas](Python/Pandas.md) | [Link](https://pandas.pydata.org/docs/) | ✔️
 | Python | NumPy | [Link](https://numpy.org/doc/stable/) | 🚧
 | Python | PySpark | [Link](https://spark.apache.org/docs/latest/api/python/) | 🚧
