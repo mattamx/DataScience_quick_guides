@@ -543,3 +543,71 @@ df = df.set_index(keys='cat')
 s = df.groupby(level=0)['col1'].sum()
 dfg = df.groupby(level=0).sum()
 ```
+
+## Pivot Tables
+Pivot tables move data from long format to wide format
+```python
+df = DataFrame(np.random.rand(100,1))
+df.columns = ['data'] # rename column
+df.index = pd.period_range('3/3/2014', periods = len(df), freq = 'M')
+df['year'] = df.index.year
+df['month'] = df.index.month
+# pivot to wide format
+df = df.pivot(index='year', columns='month', values='data')
+# melt to long format
+dfm = df
+dfm['year'] = dfm.index
+dfm = pd.melt(df, id_vars=['year'], var_name='month', value_name='data')
+# unstack to long format
+# reset index to remove multi-level index
+dfu = df.unstack().reset_index(name='data')
+# value counts
+s = df['col1'].value_counts()
+```
+
+## Working with dates, times and their indexes
+Pandas has a suite of tools for managing dates and time:
+- Either as a point in time (Timestamp)
+- Or as a span of time (Period)
+```python
+t = pd.Timestamp('2013-01-01')
+t = pd.Timestamp('2013-01-01 21:15:06')
+t = pd.Timestamp('2013-01-01 21:15:06.7')
+p = pd.Timestamp('2013-01-01', freq='M')
+```
+A Series of Timestamps or Periods
+```python
+ts = ['2015-04-01 13:17:27', '2014-04-02 13:17:29']
+# Series of Timestamps
+s = pd.to_datetime(pd.Series(ts))
+# Series of Periods
+s = pd.Series( [pd.Period(x, freq='M') for x in ts] )
+s = pd.Series(pd.PeriodIndex(ts, freq='S'))
+```
+From non-standard strings to Timestamps
+```python
+t = ['09:08:55.7654-JAN092002', '15:42:02.6589-FEB082016']
+s = pd.Series(pd.to_datetime(t, format="%H:%M:%S.%f-%b%d%Y"))
+```
+Date and time - stamps and spans as indexes:
+- An index of Timestams is a DatetimeIndex
+- An index of Periods is a PeriodIndex
+```python
+date_strs = ['2014-01-01', '2014-04-01', '2014-07-01', '2014-10-01']
+
+dti = pd.DatetimeIndex(data_strs)
+
+pid = pd.PeriodIndex(data_strs, freq='D')
+pim = pd.PeriodIndex(data_strs, freq='M')
+piq = pd.PeriodIndex(data_strs, freq='Q')
+print(pid[1] - pid[0]) # 90 days
+print(pim[1] - pim[0]) # 3 months
+print(piq[1] - piq[0]) # 1 quarter
+
+time_strs = ['2015-01-01 02:10:40.12345', '2015-01-01 02:10:50.67890']
+pis = pd.PeriodIndex(time_strs, freq='U')
+df.index = pd.period_range('2015-01', periods=len(df), freq='M')
+
+dti = pd.to_datetime(['04-01-2012'], dayfirst=True) # Australian date format
+pi = pd.period_range('1960-01-01', '2015-12-31', freq='M')
+```
