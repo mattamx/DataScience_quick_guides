@@ -480,6 +480,10 @@ df = df1.combine_first(other=df2)
 df = reduce(lambda x, y: x_combine_first(y), [df1,df2,df3,df4,df5]) # index of the combined DataFrame will be the union of the indexes from df1 and df2
 ```
 
+
+
+# Other - to be moved elsewhere
+-------
 ## Groupby: Split-Apply-Combine
 Grouping
 ```python
