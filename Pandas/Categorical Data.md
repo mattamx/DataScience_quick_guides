@@ -144,3 +144,98 @@ Rename the category:
 ```python
 df['col'] = df['col'].cat.rename_categories(my_changes)
 ```
+Common replacement issues
+- Must use a new category name
+- Cannot collapse two categories into one
+  
+Renaming categories with a function
+```python
+# update multiple categories
+df['col'] = df['col'].car.rename_categories(lambda c: c.title())
+df['col'].car.categories
+```
+
+Collapsing categories setup
+```python
+df['col'] = df['col'].astype('category')
+```
+
+Collapsing categories example
+```python
+# create a dictionary and use `.replace`
+update_categories = {'cat1' : 'new_cat1'}
+df['col'] = df['col'].replace(update_categories)
+# check the Series data type
+df['col'].dtype
+```
+
+Convert back to categorical
+```python
+df['col'] = df['col'].astype('category')
+df['col'].cat.categories
+```
+
+# Reordering categories
+Why reorder:
+1. Creating an ordinal variable
+2. To set the order that variables are displayed in analysis
+3. Memory savings
+
+Reordering example
+```python
+df['col'] = df['col'].cat.reorder_categories(new_categories=['cat1','cat2','cat3','cat4'], ordered=True)
+# using in place
+df['col'].cat.reorder_categories(new_categories=['cat1','cat2','cat3','cat4'], ordered=True, inplace=True)
+```
+
+Grouping when ordered=True
+```python
+df['col'] = df['col'].cat.reorder_categories(new_categories=['cat1','cat2','cat3','cat4'], ordered=True)
+df.groupby(by=['col']['col2'].mean()
+```
+
+Grouping when ordered=True
+```python
+df['col'] = df['col'].cat.reorder_categories(new_categories=['cat1','cat2','cat4','cat3'], ordered=False)
+df.groupby(by=['col']['col2'].mean()
+```
+
+# Cleaning and accessing data
+Possible issues with categorical data
+- Inconsistent values: `"Ham"`, `"ham"`, `" Ham"`
+- Misspelled values: `"Ham"`, `"Hma"`
+- Wrong `dtype`: df['col'].dtype # dtype('0') <-- object
+
+Identifying issues
+Use either:
+- `Series.cat.categories`
+- `Series.value_counts()`
+
+```python
+# removing whitespace: `.strip()`
+df['col'] = df['col'].str.strip()
+# capitalization: `.title()`, `.upper()`, `.lower()`
+df['col'] = df['col'].str.title()
+# fixing a typo with `.replace()`
+replace_map = {'cat1z' : 'cat1'}
+df['col'].replace(replace_map, inplace=True)
+# check the frequency counts
+df['col'].value_counts()
+# check the `dtype`
+df['col'].dtype
+# convert back to category
+df['col'] = df['col'].astype('category')
+```
+Ussing the accessor object
+```python
+# searching for a string
+df['col'].str.contains('string', regex=False) # boolean return
+```
+
+Accessing data with loc
+```python
+# access Series values based on category
+df.loc[df['col'] == 'condition', 'col2']
+# Series value counts
+df.loc[df['col'] == 'condition', 'col2'].value_counts(sort=False)
+```
