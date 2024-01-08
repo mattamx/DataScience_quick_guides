@@ -17,6 +17,7 @@ df.dtypes
 ```python
 # default dtype
 df["col"].dtype # dtype('0')
+
 # set as categorical
 df["col"] = df["col"].astype('category')
 ```
@@ -26,6 +27,7 @@ Creating a categorical Series
 my_data = ['A', 'B', 'C', 'B', 'C', 'A']
 
 my_series1 = pd.Series(my_data, dtype='category') # [A, B, C]
+
 my_series2 = pd.Categorical(my_data, categories=['C', 'B', 'A'], ordered=True) # [C < B < A]
 ```
 
@@ -38,8 +40,10 @@ Specify dtypes when reading data
 ```python
 # create a dictionary
 df_dtypes = {'key' : 'value'}
+
 # set the `dtype` parameter
 df = pd.read_csv('data.csv', dtype=df_dtypes)
+
 # check the `dtype`
 df['col'].dtype
 ```
@@ -48,8 +52,11 @@ df['col'].dtype
 ```python
 # splitting data
 df = pd.read_csv('data.csv')
+
 filter1 = df[df['col'] == 'condition']
+
 filter2 = df[df['col'] == 'condition']
+
 # replaced by
 groupby_object = df.groupby(by=['col'])
 ```
@@ -57,6 +64,7 @@ groupby_object = df.groupby(by=['col'])
 Applying a function to .groupby()
 ```python
 groupby_object.mean()
+
 # one liner
 df.groupby(by=['col']).mean()
 ```
@@ -65,6 +73,7 @@ Specifying columns
 ```python
 # option 1, preferred with large datasets
 df.groupby(by=['col'])['col1','col2'].sum()
+
 # option 2
 df.groupby(by=['col']).sum()['col1','col2']
 ```
@@ -91,6 +100,7 @@ Setting Series categories
 ```python
 # set categories
 df['col'] = df['col'].cat.set_categories(new_categories=['cat1', 'cat2', 'cat3'])
+
 # check value counts
 df['col'].value_counts(dropna=False)
 ```
@@ -114,8 +124,10 @@ Adding categories
 # add categories
 df['col'] = df['col'].astype('category')
 df['col'] = df['col'].cat.add_categories(new_categories=['cat1', 'cat2'])
+
 # check categories
 df['col'].cat.categories
+
 # new categories
 df['col'].value_counts(dropna=False)
 ```
@@ -127,6 +139,7 @@ Removing categories
 ```python
 df['col'] = df['col'].astype('category')
 df['col'] = df['col'].cat.remove_categories(removals=['category'])
+
 # check categories
 df['col'].cat.categories
 ```
@@ -152,7 +165,8 @@ Renaming categories with a function
 ```python
 # update multiple categories
 df['col'] = df['col'].car.rename_categories(lambda c: c.title())
-df['col'].car.categories
+
+df['col'].cat.categories
 ```
 
 Collapsing categories setup
@@ -165,6 +179,7 @@ Collapsing categories example
 # create a dictionary and use `.replace`
 update_categories = {'cat1' : 'new_cat1'}
 df['col'] = df['col'].replace(update_categories)
+
 # check the Series data type
 df['col'].dtype
 ```
@@ -184,6 +199,7 @@ Why reorder:
 Reordering example
 ```python
 df['col'] = df['col'].cat.reorder_categories(new_categories=['cat1','cat2','cat3','cat4'], ordered=True)
+
 # using in place
 df['col'].cat.reorder_categories(new_categories=['cat1','cat2','cat3','cat4'], ordered=True, inplace=True)
 ```
@@ -214,15 +230,20 @@ Use either:
 ```python
 # removing whitespace: `.strip()`
 df['col'] = df['col'].str.strip()
+
 # capitalization: `.title()`, `.upper()`, `.lower()`
 df['col'] = df['col'].str.title()
+
 # fixing a typo with `.replace()`
 replace_map = {'cat1z' : 'cat1'}
 df['col'].replace(replace_map, inplace=True)
+
 # check the frequency counts
 df['col'].value_counts()
+
 # check the `dtype`
 df['col'].dtype
+
 # convert back to category
 df['col'] = df['col'].astype('category')
 ```
@@ -236,6 +257,7 @@ Accessing data with loc
 ```python
 # access Series values based on category
 df.loc[df['col'] == 'condition', 'col2']
+
 # Series value counts
 df.loc[df['col'] == 'condition', 'col2'].value_counts(sort=False)
 ```
