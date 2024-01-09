@@ -220,7 +220,7 @@ df.groupby(by=['col']['col2'].mean()
 Possible issues with categorical data
 - Inconsistent values: `"Ham"`, `"ham"`, `" Ham"`
 - Misspelled values: `"Ham"`, `"Hma"`
-- Wrong `dtype`: df['col'].dtype # dtype('0') <-- object
+- Wrong `dtype`: df['col'].dtype
 
 Identifying issues
 Use either:
