@@ -24,6 +24,7 @@ Validating data types
 df.dtypes
 ```
 Updating data types
+
 Types:
 - String: `str`
 - Integer: `int`
