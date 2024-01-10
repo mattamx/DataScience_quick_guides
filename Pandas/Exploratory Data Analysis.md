@@ -38,5 +38,6 @@ df.dtypes
 ```
 Validating categorical data
 ```python
-books["col"].isin(["string1" ,"string2"]) # Boolean table
+df["col"].isin(["string1" ,"string2"]) # Boolean table
+~df["col"].isin(["string1" ,"string2"]) # Boolean table (tilde; 'is not in')
 ```
