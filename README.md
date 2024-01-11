@@ -1,6 +1,6 @@
 # DataScience_quick_guides 🚧
 
-Creating a repository of helpful documentation for all things Data Science.
+Creating a personal reference repository of helpful 'cheat sheets' for all things Data Science.
 
 | Category | Guide | Documentation | Status
 | :---------------: | :---------------: | :---------------: | :---------------:
