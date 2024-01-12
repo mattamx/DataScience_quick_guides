@@ -351,3 +351,27 @@ plt.show()
 sns.pairplot(data=df, vars=["col1", "col2", "col3"])
 plt.show()
 ```
+
+## Performing statistical analysis on scalar data
+- `pd.cut()` is used to separate the array elements into different bins
+```python
+labels = ["category1", "category2", "category3", "category4"]
+
+bins = [0, twenty_fifth, median, seventy_fifth, maximum] # min, median, quartiles and max to be assigned to labels/categories
+
+pd.cut(data, # pass the data
+      labels, # set the labels
+      bins # provide the bins
+      )
+```
+
+## Frequency with which certain groups of data appear
+- `pd.crosstab` computew a simple cross tabulation of two (or more) factors
+
+```python
+pd.crosstab(df["col1"], # selecting column for index
+            df["col2"] # selecting column
+            values = df["col3"], # selecting the values 
+            aggfunc="median" # selecting an aggregation method which are to be applied to the values
+            )
+```
