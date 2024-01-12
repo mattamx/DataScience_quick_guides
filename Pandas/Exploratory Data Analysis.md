@@ -164,19 +164,190 @@ Finding multiple phrases in strings
 df["col"].str.contrains("string1|string2") # Boolean table
 ```
 Finding multiple phrases in strings
-- Words of interest: Any that start with Data
+- Words of interest: Any that start with a specific string
 ```python
-df["col"].str.contains("^Data") # Boolean table
+df["col"].str.contains("^specific string") # Boolean table
 ```
 Finding multiple phrases in strings
 ```python
+example_categories = ["string1", "string2", "string3", "string4"]
 
+category1 = "string1|string2"
+category2 = "string3|string4"
+category3 = "string5|string6|string7|string8"
+
+example_conditions = [
+          (df["col"].str.contains(category1)),
+          (df["col"].str.contains(category2))
+          (df["col"].str.contains(category3))
 ```
 Creating the categorical column
 ```python
+df["new_col"] = np.select(example_conditions, example_categories, default="Other")
 
+# preview
+print(df[["col","new_col"]].head())
 ```
-Previewing categories
+Visualizing new column frequency
 ```python
+sns.countplot(data=df, x="new_col")
+plt.show()
+```
 
+# Working with numerical data
+
+Converting strings to numbers
+```python
+pd.Series.str.replace("characters to remove", "characters to replace them with")
+
+# fixing a string
+df["col"] = df["col"].str.replace(",", "") # replacing commas
+print(df["col"].head())
+
+# converting to float type
+df["col"] = df["col"].astype(float)
+
+# converting to required metric
+df["new_col"] = df["col"] * (percentage or decimal)
+
+# preview
+print(df[["col", "new_col"]].head())
+```
+Adding summary statistics into a DataFrame
+```python
+df.groupby("col")["col1"].mean()
+
+# standard deviation example using lambda
+df["std_dev"] = df.groupby("col")["col1"].transform(lambda x: x.std()) # for each x, transform to the respective standard deviation
+
+# preview
+print(df[["col","std_dev"]].value_counts())
+
+# median example using lambda
+df["median_by_col"] = df.groupby("col")["col1"].transform(lambda x: x.median()) # for each x, transform to the respective median
+
+# preview
+print(df[["col","median_by_col"]].head())
+```
+
+# Handling outliers
+- An observation far away from other data points
+- Should always consider why there is an outlier
+
+Using descriptive statistics
+```python
+print(df["col"].describe())
+```
+Using the interquartile range 
+- Interquartile range (IQR)
+  - IQR = 75th - 25th percentile
+  - Upper Outliers > 75th percentile + (1.5 * IQR)
+  - Lower Outliers < 25th percentile - (1.5 * IQR)
+
+IQR in box plots
+```python
+sns.boxplot(data=df, y="col")
+plt.show()
+```
+Identifying thresholds
+```python
+# 75th percentile
+seventy_fifth = df["col"].quantile(0.75)
+
+# 25th percentile
+twenty_fifth = df["col"].quantile(0.25)
+
+# Interquartile range
+df_iqr = seventy_fifth - twenty_fifth
+
+print(df_iqr)
+```
+Identifying outliers
+```python
+# Upper threshold
+upper = seventy_fifth + (1.5 * df_iqr)
+
+# Lower threshold
+lower = twenty_fifth - (1.5 * df_iqr)
+
+print(upper, lower)
+```
+Subsetting the data
+```python
+df[(df["col"] < lower) | (df["col"] > upper)] \
+      [["col1", "col2", "col3"]] # columns to display
+```
+Why look for outliers:
+- Outliers are extreme values
+  - may not accurately represent the data
+- Can change the mean and standard deviation
+- Statistical test and machine learning models need normally distributed data
+
+Questions to ask:
+- Why do the outliers exist?
+  - Consider leaving them in the dataset depending on they why
+- Is the data accurate?
+  - Could there have been an error in data collection?
+    - If so, remove them
+   
+Dropping outliers
+```python
+no_outliers = df[(df["col"] > lower) | (df["col"] < upper)]
+
+print(no_outliers["col"].describe())
+```
+
+# Patterns over time
+Importing DateTime data
+- DateTime data needs to be explicitly declared to Pandas
+
+```python
+df = pd.read_csv('data.csv', parse_dates=["col"])
+df.dtypes
+```
+Converting to Datetime data
+- `pd.to_datetime()` converst arugments to DateTime data
+```python
+df["col"] = pd.to_datetime(df["col"])
+df.dtypes
+```
+Creating DateTime data
+```python
+df["col"] = pd.to_datetime(df[["month", "day", "year"]])
+
+# extracting parts of a full date using `dt.month`, `dt.day`, and `dt.year` attributes
+df["month_col"] = df["col"].dt.month
+df["day_col"] = df["col"].dt.day
+df["year_col"] = df["col"].dt.year
+```
+
+# Correlation
+- Describes direction and strength of relationship between two variables
+- Can help us use variables to predict future outcomes
+```python
+df.corr()
+```
+Correlation heatmaps
+```python
+sns.heatmap(df.corr(), annot=True)
+plt.show()
+```
+Correlation in context
+```python
+df["date_col"].min()
+df["date_col"].max()
+```
+Scatter plots
+```python
+sns.scatterplot(data=df, x="col1", y="col2")
+plt.show()
+```
+Pairplots
+```python
+sns.pairplot(data=df)
+plt.show()
+
+# multiple variables
+sns.pairplot(data=df, vars=["col1", "col2", "col3"])
+plt.show()
 ```
