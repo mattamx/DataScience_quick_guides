@@ -30,7 +30,7 @@ SELECT make, model, time_to_60_mph_s
     FROM cars
     ORDER BY time_to_60_mph_s
 ```
-Arrange the wors in descending order of values in a column with `ORDER BY col DESC`
+Arrange the rows in descending order of values in a column with `ORDER BY col DESC`
 ```sql
 SELECT make, model, model_year
     FROM cars
