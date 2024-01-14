@@ -209,3 +209,41 @@ WHERE rating = (
       WHERE name = 'Paris'
 );
 ```
+## Multiple values
+A subquery can also return multiple columns or multiple rows. Such subqueries can be used with operators IN, EXISTS, ALL or ANY.
+
+This query finds cities in countries that have a population above 20M
+```sql
+SELECT name
+FROM city
+WHERE country_id IN (
+      SELECT country_id
+      FROM country
+      WHERE population > 20000000
+);
+```
+## Correlated
+A correlated subquery refers to the tables introduced in the outer query. 
+- A correlated subquery depends on the outer query. 
+= It cannot be run independently from the outer query.
+
+This query finds cities with a population greater than the average population in the country
+```sql
+SELECT *
+FROM city main_city
+WHERE population > (
+      SELECT AVG(population)
+      FROM city average_city
+      WHERE average_city.country_id = main_city.country_id
+);
+```
+This query finds countries that have at least one city
+```sql
+SELECT name
+FROM country
+WHERE EXISTS (
+      SELECT *
+      FROM city
+      WHERE country_id = country.id
+);
+```
