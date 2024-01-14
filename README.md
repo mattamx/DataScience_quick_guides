@@ -13,7 +13,7 @@ Creating a personal reference repository of helpful 'cheat sheets' for all thing
 | SQL | SQLAlchemy | [Link](https://www.sqlalchemy.org) | 🚧
 | SQL | BigQuery | [Link](https://cloud.google.com/bigquery/docs) | 🚧
 | SQL | MySQL | [Link](https://www.mysql.com/) | 🚧
-| SQL | PostgreSQL | [Link](https://www.postgresql.org/) | 🚧
+| SQL | [PostgreSQL](SQL/PostgreSQL.md) | [Link](https://www.postgresql.org/) | ✔️
 | SQL | Commands | Link | 🚧
 | Linear Algebra | [SciPy](Linear%20Algebra/SciPy.md) | [Link](https://docs.scipy.org/doc/scipy/) | ✔️
 | Machine Learning | [Scikit-learn](Machine%20Learning/Scikit-learn.md) | [Link](https://scikit-learn.org/stable/index.html) | ✔️
