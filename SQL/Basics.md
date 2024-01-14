@@ -225,7 +225,7 @@ WHERE country_id IN (
 ## Correlated
 A correlated subquery refers to the tables introduced in the outer query. 
 - A correlated subquery depends on the outer query. 
-= It cannot be run independently from the outer query.
+- It cannot be run independently from the outer query.
 
 This query finds cities with a population greater than the average population in the country
 ```sql
