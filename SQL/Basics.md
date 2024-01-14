@@ -91,6 +91,7 @@ WHERE country_id IN (1, 4, 7, 8);
 # Querying multiple tables
 ## Inner join
 Returns rows that have matching values in both tables.
+
 ![Screenshot 2024-01-14 at 2 33 54 PM](https://github.com/mattamx/DataScience_quick_guides/assets/107958646/211026a4-ac4b-4907-ba52-ef15309236be)
 ```sql
 SELECT city.name, country.name
@@ -100,6 +101,7 @@ FROM city
 ```
 ## Left join
 Returns all rows from the left table with corresponding rows from the right table. If there is not matching row, **NULLs** are returned as values from the second table.
+
 ![Screenshot 2024-01-14 at 2 36 11 PM](https://github.com/mattamx/DataScience_quick_guides/assets/107958646/f1c65bae-c5af-4c68-960f-5672664e81dd)
 ```sql
 SELECT city.name, country.name
@@ -117,6 +119,7 @@ LEFT JOIN country
 ```
 ## Full join
 Returns all rows from both tables - if there are no matching rows in the second table, **NULLs** are returned.
+
 ![Screenshot 2024-01-14 at 2 41 32 PM](https://github.com/mattamx/DataScience_quick_guides/assets/107958646/d53ff101-b9aa-4ae2-97a8-bc8b6da9b85a)
 ```sql
 SELECT city.name, country.name
@@ -126,6 +129,7 @@ FULL [OUTER] JOIN country
 ```
 ## Cross join
 Returns all possible combinations of rows from both tables. There are two syntaxes available.
+
 ![Screenshot 2024-01-14 at 2 41 56 PM](https://github.com/mattamx/DataScience_quick_guides/assets/107958646/c5da6b92-e30a-4ec3-b98b-36cc3ef24d72)
 ```sql
 SELECT city.name, country.name
@@ -137,6 +141,7 @@ FROM city, country;
 ```
 ## Natural join
 Joins tables by all columns with the same name. Rarely used in practice.
+
 ![Screenshot 2024-01-14 at 2 42 21 PM](https://github.com/mattamx/DataScience_quick_guides/assets/107958646/8b7dbd37-1e0f-4ec1-a13d-17bbf42fd9ba)
 ```sql
 SELECT city.name, country.name
@@ -146,6 +151,7 @@ NATURAL JOIN country;
 
 # Aggregation and Grouping
 GROUP BY groups together rows that have the same values in specified columns. It computes summaries (aggregates) for each unique combination of values.
+
 ![Screenshot 2024-01-14 at 2 43 39 PM](https://github.com/mattamx/DataScience_quick_guides/assets/107958646/6fed2081-fffa-47e3-8500-9958e6a04157)
 ## Aggregate functions
 - avg(expr): average value for rows within the group
