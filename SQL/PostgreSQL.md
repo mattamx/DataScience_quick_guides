@@ -40,7 +40,7 @@ Limit the number of rows returned with `LIMIT n`
 ```python
 SELECT *
     FROM cars
-LIMIT 2
+    LIMIT 2
 ```
 Get unique values with `SELECT DISTINCT`
 ```sql
@@ -192,7 +192,7 @@ Filter before and after grouping with WHERE condn_before `GROUP BY col HAVING co
 ```sql
 SELECT propulsion_type, AVG(time_to_60_mps_s) AS mean_time_to_60_mps_s
     FROM cars
-WHERE limited_production_count IS NOT NULL
+    WHERE limited_production_count IS NOT NULL
     GROUP BY propulsion_type
     HAVING mean_time_to_60_mps_s > 2
 ```
@@ -201,7 +201,7 @@ Limit the number of rows returned, offset from the top with `LIMIT m OFFSET n`
 ```sql
 SELECT *
     FROM cars
-LIMIT 2 OFFSET 3
+    LIMIT 2 OFFSET 3
 ```
 PostgreSQL allows text concatenation with the `||` operator
 ```sql
