@@ -366,7 +366,7 @@ pd.cut(data, # pass the data
 ```
 
 ## Frequency with which certain groups of data appear
-- `pd.crosstab` computew a simple cross tabulation of two (or more) factors
+- `pd.crosstab` compute a simple cross tabulation of two (or more) factors
 
 ```python
 pd.crosstab(df["col1"], # selecting column for index
