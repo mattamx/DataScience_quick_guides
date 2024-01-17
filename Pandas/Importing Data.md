@@ -172,3 +172,98 @@ values = objects assigned to variables
 
 print(type(mat['x'])) # class numpy.ndarray
 ```
+
+# Creating a database engine in Python
+- SQLite database
+  - Fast and simple
+- SQLAlchemy
+  - Works with many Relational Database Management Systems (RDMS)
+```python
+from sqlalchemy import create_engine
+
+engine = create_engine('sqlite:///name.sqlite')
+```
+
+Getting table names
+```python
+table_names = engine.table_names()
+
+print(table_names)
+```
+
+## Querying relational databases
+- Basic SQL query
+```sql
+SELECT * FROM Table_Name
+```
+- Returns all columns of all rows of the table
+- Example:
+```sql
+SELECT * FROM orders
+```
+Workflow of SQL querying
+- Import packages and functions
+- Create the database engine
+- Connect to the engine
+- Query the database
+- Save query results to a DataFrame
+- Close the connection
+  
+```python
+from sqlalchemy import create_engine
+import pandas as pd
+
+engine = create_engine('sqlite:///name.sqlite')
+con = engine.connect()
+rs. con.execute('query')
+df = pd.DataFrame(rs.fetchall())
+con.close()
+
+print(df.head())
+```
+Set the DataFrame column names
+```python
+from sqlalchemy import create_engine
+import pandas as pd
+
+engine = create_engine('sqlite:///name.sqlite')
+con = engine.connect()
+rs. con.execute('query')
+df = pd.DataFrame(rs.fetchall())
+df.columns = rs.keys()
+con.close()
+
+print(df.head())
+```
+Using the context manager
+```python
+from sqlalchemy import create_engine
+import pandas as pd
+
+engine = create_engine('sqlite:///name.sqlite')
+
+with engine.connect() as con:
+  rs = con.execute('query')
+  df = pd.DataFrame(rs.fetchmany(size=5))
+  df.columns = rs.keys()
+```
+## Querying relational databases directly with Pandas
+```python
+from sqlalchemy import create_engine
+import pandas as pd
+
+engine = create_engine('sqlite:///name.sqlite')
+
+df = pd.read_sql_query('query', engine)
+```
+## Advanced querying: exploiting table relationships
+INNER JOIN in Python (pandas)
+```python
+from sqlalchemy import create_engine
+import pandas as pd
+
+engine = create_engine('sqlite:///name.sqlite')
+df = pd.read_sql_query('SELECT table1, table2 FROM table1 INNER JOIN table2 ON table1.column = table2.column', engine)
+
+print(df.head())
+```
