@@ -165,10 +165,10 @@ filename = 'name.mat'
 mat = scipy.io.loadmat(filename)
 
 print(type(mat)) # class dict
-'''
+"""
 keys = Matlab variable names
 values = objects assigned to variables
-'''
+"""
 
 print(type(mat['x'])) # class numpy.ndarray
 ```
