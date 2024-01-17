@@ -152,7 +152,7 @@ print( np.array(data['meta']['Description']), np.array(data['meta']['Detector'])
 ```
 
 ## Importing MATLAB files
-= "Matrix Laboratory"
+- "Matrix Laboratory"
 - Industry standard in engineering and science
 - Data saved as .mat files
 - scipy.io.loadmat(): read .mat files
