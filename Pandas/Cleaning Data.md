@@ -454,6 +454,7 @@ plt.show()
     - Missing temperature values for high temperatures
    
 How to deal with missing data?
+
 **Simple approaches:**
 1. Drop missing data
 2. Impute with statistical measures *(mean, median, mode..)*
