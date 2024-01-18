@@ -474,3 +474,172 @@ col_mean = df['col'].mean()
 df_imputed = df.fillna({'col': col_mean})
 df_imputed.head()
 ```
+
+# Comparing strings
+
+Minimum edit distance algorithms
+| Algorithm | Operations |
+| :---------------: | --------------- |
+| Damerau-Levenshtein | insertion, substitution, deletion, transposition
+| Levenshtein | insertion, substitution, deletion
+| Hamming | substitution only
+| Jaro distance | transposition only
+
+**Possible packages:** `nltk`, `thefuzz`, `textdistance`
+
+Simple string comparison
+```python
+from thefuzz import fuzz
+
+# comparing reeding vs reading
+fuzz.WRatio('Reeding', 'Reading') # 86
+```
+Partial strings and different orderings
+```python
+# partial string comparison
+fuzz.WRatio('Houston Rockets', 'Rockets') # 90
+
+# partial string comparison with different order
+fuzz.WRatio('Houston Rockets vs Los Angeles Lakers', 'Lakers vs Rockets') # 86
+```
+Comparison with arrays
+```python
+from thefuzz import process
+
+# define string and array of possible matches
+string = 'Houston Rockets vs Los Angeles Lakers'
+choices = pd.Series(['Rockets vs Lakers', 'Lakers vs Rockets',
+                    'Houston vs Los Angeles', 'Heat vs Bulls'])
+
+process.extract(string, choices, limit = 2)
+```
+Collapsin categories with string similarity
+- Use `.replace()` to collapse `"eur"` into `"Europe"`
+- What if there are too many variations?
+- `"EU"` , `"eur"` , `"Europ"` , `"Europa"` , `"Erope"` , `"Evropa"`
+
+Collapsing categories with string matching
+```python
+print(df['col'].unique())
+categories # 2 categories
+
+# for each correct category
+for element in categories['col']:
+  # find potential matches with typos
+    matches = process.extract(element, df['col'], limit = df.shape[0])
+    # for each potential match match
+    for potential_match in matches:
+      # if high similarity score
+        if potential_match[1] >= 80:
+          # replace typo with correct category
+          df.loc[df['col'] == potential_match[0], 'col'] = element
+```
+
+# Generating pairs
+
+`recordlinkage` package
+
+- Data A and Data B
+  - Generate pairs
+  - Compare pairs
+  - Score pairs
+- Link data
+```python
+import recordlinkage
+
+# create indexing object
+indexer = recordlinkage.Index()
+
+# generate pairs blocked on column
+indexer.block('col')
+pairs = indexer.index(df1, df2)
+
+print(pairs)
+```
+Comparing the DataFrames
+```python
+# generate pairs
+pairs = indexer.index(df1, df2)
+
+# create the compare object
+compare_cl = recordlinkage.Compare()
+
+# find exact matches for pairs fo column 1 and column 2
+compare_cl.extract('col1', 'col1', label = 'col1')
+compare_cl.extract('col2', 'col2', label = 'col2')
+
+# find similar matches for pairs of column 3 and column 4 using string similarity
+compare_cl.string('col3', 'col3', label = 'col3')
+compare_cl.string('col4', 'col4', label = 'col4')
+
+# find matches
+potential_matches = compare_cl.computer(pairs, df1, df2)
+
+print(potential_matches)
+
+# finding the only pairs we want
+potential_matches[potential_matches.sum(axis = 1) => 2]
+```
+
+## Linking DataFrames
+
+What we have already done
+```python
+# import recordlinkage and generate full pairs
+import recordlinkage
+indexer = recordlinkage.Index()
+indexer.block('col')
+full_pairs = indexer.index(df1, df2)
+
+# comparison step
+compare_cl = recordlinkage.Compare()
+compare_cl.extract('col1', 'col1', label = 'col1')
+compare_cl.extract('col2', 'col2', label = 'col2')
+compare_cl.string('col3', 'col3', label = 'col3')
+compare_cl.string('col4', 'col4', label = 'col4')
+
+potential_matches = compare_cl.computer(full_pairs, df1, df2)
+
+```
+Probable matches
+```python
+matches = potential_matches[potential_matches.sum(axis = 1) => 3]
+print(matches)
+
+# get the indices
+matches.index
+
+# get indices from df2 only
+duplicate_rows = matches.index.get_level_values(1)
+```
+Linking DataFrames
+```python
+# finding duplicates in df2
+df2_duplicates = df2[df2.index.isin(duplicate_rows)]
+
+# finding new rows in df2
+df2_new = df2[~df2.index.isin(duplicate_rows)]
+
+# link the DataFrames
+full_df = df1.append(df2_new)
+```
+
+```python
+# import recordlinkage, generate pairs and compare across columns
+...
+
+# generate potential matches
+potential_matches = compare_cl.compute(full_pairs, df1, df2)
+
+# isolate matches with matching values for 3 or more columns
+matches = potential_matches[potential_matches.sum(axis = 1) >= 3]
+
+# get index for matching df2 rows only
+duplicate_rows = matches.index.get_level_values(1)
+
+# find new rows in df2
+df2_new = df2[~df2.index.isin(duplicate_rows)]
+
+# link the DataFrames
+full_df = df1.append(df2_new)
+```
