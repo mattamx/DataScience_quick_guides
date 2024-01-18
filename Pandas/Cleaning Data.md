@@ -513,7 +513,7 @@ choices = pd.Series(['Rockets vs Lakers', 'Lakers vs Rockets',
 
 process.extract(string, choices, limit = 2)
 ```
-Collapsin categories with string similarity
+Collapsing categories with string similarity
 - Use `.replace()` to collapse `"eur"` into `"Europe"`
 - What if there are too many variations?
 - `"EU"` , `"eur"` , `"Europ"` , `"Europa"` , `"Erope"` , `"Evropa"`
