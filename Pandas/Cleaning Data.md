@@ -285,17 +285,195 @@ print(df)
 # further replacing a character with nothing
 df['col'] = df['col'[.str.replace("-", "")
 print(df)
+
+# replacing a string based on length
+df_filter = df['col'].str.len()
+df.loc[df_filter < value, 'col'] = np.nan
+
+# finding the length of each row in the column
+sanity_check = df['col'].str.len()
+
+# asserting minimum length is a specific value
+asser sanity_check.min() >= value
+
+# asserting all values do not have any specific strings
+asser df['col'].str.contains("+|-").any() == False
+
+# replacing letter in a column with nothing
+df['col'] = df['col'].str.replace(r'\D+', '') # regular expression
+df.head()
+```
+
+# Uniformity
+| Column | Unit |
+| :---------------: | --------------- |
+| Temperature | `32°C` is also `89.6°F`
+| Weight | `70 Kg` is also `11 st.`
+| Date | `26-11-2019` is also `26, November, 2019`
+| Money | `100$` is also `10763.90¥`
+
+```python
+temperatures = pd.read_csv('temperature.csv')
+temperatures.head()
+```
+Checking for non-uniformity with matplotlib
+```python
+import matplotlib.pyplot as plt
+
+# creating scatterplot
+plt.scatter(x= 'Date', y= 'Temperature', data= temperatures)
+plt.title('Temperature in Celsius March 2019 - NYC')
+plt.xlabel('Dates')
+plt.ylabel('Temperature in Celsius')
+plt.show()
+```
+Treating temperature data
+```python
+# conversion to celsius (for perceived fahrenheit outliers)
+temp_fah = temperatures.loc[temperatures['Temperature'] > 40, 'Temperature']
+temp_cels = (temp_fah - 32) * (5/9)
+temperatures.loc[temperatures['Temperature'] > 40, 'Temperature'] = temp_cels
+
+# aserting conversion is correct
+assert temperatures['Temperature'].max() < 40
+```
+Treating date data
+`datetime` is useful for representing dates
+| Date | datetime format |
+| :---------------: | --------------- |
+| 25-12-2019 | `%d-%m-%Y`
+| December 25th 2019 | `%c`
+| 12-25-2019 | `%m-%d-%Y`
+
+`pandas.to_datetime()`
+- Can recognize most formats automatically
+- Sometimes fails with erroneous or unrecognizable formats
+
+Treating ambiguous date data
+- Is `2019-03-08 in August or March?
+  - Convert to `NA` and treat accordingly
+  - Infer format by understanding data source
+  - Infer format by understanding previous and subsequent data in DataFrame
+  
+```python
+# converting to date time - but won't work
+birthdays['Birthday'] = pd.to_datetime(birthdays['Birthday'])
+
+# will work
+birthdays['Birthday'] = pd.to_datetime(birthdays['Birthday'],
+                        # attempt to infer format of each date
+                        infer_datetime_format = True,
+                        # return NA for rows where conversion failed
+                        errors = 'coerce')
+
+# applying a specific format
+birthdays['Birthday'] = birthdays['Birthday'].dt.strftime('%d-%m-%Y')
+```
+
+# Cross field validation
+The use of **multiple** fields in a dataset to sanity check data integrity
+
+What to do when we catch inconsistencies?
+- Dropping data
+- Set to missing and impute
+- Apply rules from domain knowledge
+
+```python
+sum_classes = df[['col1', 'col2', 'col3']].sum(axis=1)
+total_equivalence = sum_classes == df['col'] # comparing the sum to the total column for a sanity check
+
+# find and filter out rows with inconsistent totals
+inconsistent_totals = df[total_equivalence]
+consistent_totals = df[~total_equivalence]
+```
+
+```python
+import pandas as pd
+import datetime as dt
+
+# convert to date time and get today's date
+df['col'] = pd.to_datetime(df['col])
+today = dt.date.today()
+
+# for each row in the date column, calculate year difference
+manual_difference = today.year - df['col'].dt.year
+
+# find instances where years match
+year_equivalence = manual_difference == df['col1'] # finding matches
+
+# find and filter out rows with inconsistent
+inconsistent_year = df[year_equivalence]
+consistent_year = df[~year_equivalence]
+```
+
+# Completeness
+Missing data: occurs when no data is stored for a variable in an observation
+- Can be represented as `NA`, `nan`, `0`, `.`
+- Technical errors
+- Human errors
+```python
+# return missing values
+df.isna() # boolean table
+
+# summary of missingness
+df.isna().sum()
+```
+## Missingno
+Useful package for visualizing and understanding missing data
+```python
+import missingno as msno
+import matplotlib.pyplot as plt
+
+# visualize missingness
+msno.matrix(df)
+plt.show()
+```
+Isolating missing and complete values aside
+```python
+missing = df[df['col'].isna()]
+complete = df[~df['col'].isna()]
+
+complete.describe()
+missing.describe()
+```
+Visualizing sorted missingness as a check
+```python
+sorted_df = df.sort_values(by='col')
+msno.matrix(sorted_df)
+plt.show()
+```
+## Missingness types
+- Missing Completely at Random (MCAR)
+  - No systematic relationship between data and other values
+    - Data entry errors when inputting data
+- Missing at Random (MAR)
+  - Systemic relationship between missing data and other observed values
+    - Missing ozon data for high temperatures
+- Missing Not at Random (MNAR)
+  - Systemic relationship between missing data and unobserved values
+    - Missing temperature values for high temperatures
+   
+How to deal with missing data?
+**Simple approaches:**
+1. Drop missing data
+2. Impute with statistical measures *(mean, median, mode..)*
+   
+**More complex approaches:**
+1. Imputing using an algorithmic approach
+2. Impute with machine learning models
+   
+```python
+# dropping missing values
+df_dropped = df.dropna(subset=['col'])
+df_dropped.head()
+```
+Replacing with statistical measures
+```python
+col_mean = df['col'].mean()
+df_imputed = df.fillna({'col': col_mean})
+df_imputed.head()
 ```
 
 ```python
 
 ```
-
-```python
-
-```
-
-```python
-
-```
-
