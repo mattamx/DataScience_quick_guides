@@ -474,7 +474,3 @@ col_mean = df['col'].mean()
 df_imputed = df.fillna({'col': col_mean})
 df_imputed.head()
 ```
-
-```python
-
-```
