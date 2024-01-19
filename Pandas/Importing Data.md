@@ -45,7 +45,7 @@ Customizing your NumPy import
 import numpy as np
 
 filename = 'name.txt'
-data = np.loadtxt(filename, delimiter= ',', skiprows=1, usecols=[0,2, dtype=str)
+data = np.loadtxt(filename, delimiter= ',', skiprows=1, usecols=[0,2], dtype=str)
 
 print(data)
 ```
