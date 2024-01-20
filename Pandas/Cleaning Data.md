@@ -294,10 +294,10 @@ df.loc[df_filter < value, 'col'] = np.nan
 sanity_check = df['col'].str.len()
 
 # asserting minimum length is a specific value
-asser sanity_check.min() >= value
+assert sanity_check.min() >= value
 
 # asserting all values do not have any specific strings
-asser df['col'].str.contains("+|-").any() == False
+assert df['col'].str.contains("+|-").any() == False
 
 # replacing letter in a column with nothing
 df['col'] = df['col'].str.replace(r'\D+', '') # regular expression
