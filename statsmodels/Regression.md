@@ -255,7 +255,8 @@ model_son_vs_father.predict(really_short_father)
 
 ## Transforming variables
 
-Perch dataset example
+**Perch dataset example**
+
 ```python
 perch = fish[fish['species] == 'Perch']
 print(perch.head())
@@ -304,7 +305,8 @@ plt.show()
 ```
 <img width="495" alt="Screenshot 2024-01-24 at 5 24 05 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/22bb83f4-48fd-46ea-ba36-5540408a0b57">
 
-Facebook advertising dataset
+**Facebook advertising dataset**
+
 How advertising works:
 1. Pay Facebook to show ads
 2. People see the ads ('impressions')
