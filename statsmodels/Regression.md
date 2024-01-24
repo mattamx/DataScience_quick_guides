@@ -30,6 +30,7 @@ What is regression?
   - There is only one explanatory variable.
  
 **Python packages for regression**
+
 `statsmodels`
 - Optimized for insight
 
