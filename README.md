@@ -9,7 +9,7 @@ Creating a personal reference repository of helpful 'cheat sheets' for all thing
 | Visualization | [Seaborn](Visualization/Seaborn.md) | [Link](https://seaborn.pydata.org/index.html) | ✔️
 | Python Module | [Pandas](Pandas) | [Link](https://pandas.pydata.org/docs/) | 🚧
 | Python Module | NumPy | [Link](https://numpy.org/doc/stable/) | 🚧
-| Python Module | statsmodels | [Link](https://www.statsmodels.org/stable/index.html) | 🚧
+| Python Module | [statsmodels](statsmodels/Regression.md) | [Link](https://www.statsmodels.org/stable/index.html) | 🚧
 | API | PySpark | [Link](https://spark.apache.org/docs/latest/api/python/) | 🚧
 | SQL | SQLAlchemy | [Link](https://www.sqlalchemy.org) | 🚧
 | SQL | BigQuery | [Link](https://cloud.google.com/bigquery/docs) | 🚧
