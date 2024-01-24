@@ -54,13 +54,17 @@ sns.regplot(x='col1', y='col2', data=df, ci=None)
 ## Fitting a linear regression
 
 Straight lines are defined by two things
+
 **Intercept**
+
 The ***y*** value at the point when ***x*** is zero.
 
 **Slope**
+
 The amount of the ***y*** value increases if you increase ***x*** by one.
 
 **Equation**
+
 ***y = intercept + slope * x***
 
 Running a model
