@@ -114,18 +114,6 @@ print(model_without)
 
 ```
 
-```python
-
-```
-
-```python
-
-```
-
-```python
-
-```
-
 # Making predictions
 
 ```python
