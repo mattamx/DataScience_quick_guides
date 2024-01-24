@@ -7,8 +7,9 @@ Creating a personal reference repository of helpful 'cheat sheets' for all thing
 | Visualization | [Plotly](Visualization/Plotly.md) | [Link](https://matplotlib.org/2.0.0/index.html) | ✔️
 | Visualization | [Matplotlib](Visualization/Matplotlib.md) | [Link](https://plotly.com/python/plotly-express/) | ✔️
 | Visualization | [Seaborn](Visualization/Seaborn.md) | [Link](https://seaborn.pydata.org/index.html) | ✔️
-| Library | [Pandas](Pandas) | [Link](https://pandas.pydata.org/docs/) | 🚧
-| Library | NumPy | [Link](https://numpy.org/doc/stable/) | 🚧
+| Python Module | [Pandas](Pandas) | [Link](https://pandas.pydata.org/docs/) | 🚧
+| Python Module | NumPy | [Link](https://numpy.org/doc/stable/) | 🚧
+| Python Module | statsmodels | [Link](https://www.statsmodels.org/stable/index.html) | 🚧
 | API | PySpark | [Link](https://spark.apache.org/docs/latest/api/python/) | 🚧
 | SQL | SQLAlchemy | [Link](https://www.sqlalchemy.org) | 🚧
 | SQL | BigQuery | [Link](https://cloud.google.com/bigquery/docs) | 🚧
