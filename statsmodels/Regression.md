@@ -116,8 +116,38 @@ print(model_without)
 
 # Making predictions
 
+Data on explanatory values to predict
 ```python
+explanatory_data = pd.DataFrame({'col': np.arange(int, int})
 
+print(model.predict(explanatory_data))
+```
+Predicting inside a DataFrame
+```python
+explanatory_data = pd.DataFrame({'col': np.arange(int, int}
+
+predict_data = explanatory_data.assign(column_name = model.predict(explanatory_data))
+```
+Showing predictions
+```python
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+fig = plt.figure()
+sns.regplot(x='explan_col',y='response_col', ci=None, data=df)
+
+sns.regplot(x='explan_col',y='response_col', data=explanatory_data, color='red', marker='s')
+
+plt.show()
+```
+Extrapolating
+- *Extrapolating* means making predictions outside the range of observed data.
+```python
+explanatory_data = pd.DataFrame({'col': [int]}
+
+predict_data = explanatory_data.assign(column_name = model.predict(explanatory_data))
+
+print(predict_data)
 ```
 
 ## Working with model objects
