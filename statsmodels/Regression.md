@@ -697,6 +697,7 @@ plt.show()
 <kbd><img width="396" alt="Screenshot 2024-01-25 at 6 05 22 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/c6178fec-d887-4ffe-8bf8-a14540cdddef"></kbd>
 
 Zooming Out
+
 <kbd><img width="486" alt="Screenshot 2024-01-25 at 6 05 29 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/3f8d612a-302a-4889-8fde-1ed8a19c2ad7"></kbd>
 
 ## Predictions and odds ratios
@@ -746,6 +747,7 @@ plt.show()
 **Odds ratios**
 
 *Odds ratio* is the probability of something happening divided by the probability that it doesn't.
+
 <kbd><img width="317" alt="Screenshot 2024-01-25 at 6 12 53 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/a3d0d6ee-5ddd-4a19-bba6-38cb10a0c3fa"></kbd>
 
 <kbd><img width="400" alt="Screenshot 2024-01-25 at 6 13 22 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/5faa2058-5923-4bbb-8936-53f34a822ffe"></kbd>
@@ -846,6 +848,7 @@ mosaic(conf_matrix)
 **Accuracy**
 
 *Accuracy* is the proportion of correct predictions.
+
 <kbd><img width="349" alt="Screenshot 2024-01-25 at 6 30 46 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/e1ee2c81-0997-4367-ac18-8b00e233f0df"></kbd>
 
 ```python
@@ -861,6 +864,7 @@ acc = (TN + TP) / (TN + TP + FN + FP)
 **Sensitivity**
 
 *Sensitivity* is the proportion of true positives.
+
 <kbd> <img width="248" alt="Screenshot 2024-01-25 at 6 33 04 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/3bed7ea7-0162-49f9-b781-ca54a502db66"></kbd>
 ```python
 sense = TP / (FN + TP)
@@ -869,6 +873,7 @@ sense = TP / (FN + TP)
 **Specificity**
 
 *Specificity* is the proportion of true negatives.
+
 <kbd> <img width="239" alt="Screenshot 2024-01-25 at 6 33 55 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/4ba41857-a9b7-45d9-a429-4eb4cccbf9c8"> </kbd>
 ```python
 spec = TN / (TN + FP)
