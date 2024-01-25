@@ -628,3 +628,248 @@ sns.regplot(x='length_cm', y='mass_g', data=roach, ci=None, line_kws={'color':'g
 sns.regplot(x='length_cm', y='mass_g', data=roach_not_short, ci=None, line_kws={'color':'red'})
 ```
 <kbd><img width="513" alt="Screenshot 2024-01-24 at 9 15 46 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/82e84114-2a88-406a-9281-439527facdbe"></kbd>
+
+# Logistic Regression
+
+Bank churn dataset
+
+| has_churned | time_since_first_purchase | time_since_last_purchase |
+| --------- | --------- | --------- |
+| 0 | 0.3993247 | -0.5158691 |
+| 1 | -0.4297957 | 0.6780654 |
+| 0 | 3.7383122 | 0.4082544 |
+| 0 | 0.6032289 | -0.6990435 |
+| ... | ... | ... |
+| *response* | *length of relationship* | *recency of activity* |
+
+Churn vs. recency
+```python
+mdl_churn_vs_recency_lm = ols('has_churned ~ time_since_last_purchase', data=churn).fit()
+
+print(mdl_churn_vs_recency_lm)
+
+intercept, slope = mdl_churn_vs_recency_lm.params
+```
+Visualizing the linear model
+```python
+sns.scatterplot(x='time_since_last_purchase', y='has_churned', data=churn)
+
+plt.axline(xy1=(0, intercept), slope=slope)
+
+plt.show()
+```
+<kbd><img width="379" alt="Screenshot 2024-01-25 at 6 01 18 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/75e3d9c7-7e01-41fa-bb0a-832165f305d7"></kbd>
+
+Zooming out
+```python
+sns.scatterplot(x='time_since_last_purchase', y='has_churned', data=churn)
+
+plt.axline(xy1=(0, intercept), slope=slope)
+
+plt.xlim(-10,10)
+plt.ylim(-0.2, 1.2)
+plt.show()
+```
+<kbd><img width="381" alt="Screenshot 2024-01-25 at 6 01 57 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/10157409-0e40-408a-95eb-1846569e3c3b"> </kbd>
+
+**What is logistic regression?**
+
+- Another type of generalized linear model
+- Used whent he response variable is logical
+- The responses follow logistic (S-shaped) curve
+
+Logistic regression using logit()
+```python
+from statsmodels.formula.api import logit
+
+mdl_churn_vs_recency_logit = logit('has_churned ~ time_since_last_purchase', data=churn).fit()
+
+print(mdl_churn_vs_recency_logit.params)
+```
+Visualizing the logistic model
+```python
+sns.regplot(x='time_since_last_purchase', y='has_churned', data=churn, ci=None, logistic=True)
+
+plt.axline(xy1=(0, intercept), slope=slope, color='black')
+
+plt.show()
+```
+<kbd><img width="396" alt="Screenshot 2024-01-25 at 6 05 22 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/c6178fec-d887-4ffe-8bf8-a14540cdddef"></kbd>
+
+Zooming Out
+<kbd><img width="486" alt="Screenshot 2024-01-25 at 6 05 29 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/3f8d612a-302a-4889-8fde-1ed8a19c2ad7"></kbd>
+
+## Predictions and odds ratios
+
+The regplot() predictions
+```python
+sns.regplot(x='time_since_last_purchase', y='has_churned', data=churn, ci=None, logistic=True)
+
+plt.show()
+```
+<kbd><img width="396" alt="Screenshot 2024-01-25 at 6 09 31 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/f2f340e6-c010-43b2-9eca-bb0a9b7a1a7e"></kbd>
+
+Making predictions
+```python
+mdl_recency= logit('has_churned ~ time_since_last_purchase', data=churn).fit()
+
+explanatory_data = pd.DataFrame({'time_since_last_purchase': np.arange(-1, 6.25, 0.25))
+
+prediction_data = explanatory_data.assign(has_churned=mdl_recency.predict(explanatory_data))
+```
+Adding point predictions
+```python
+sns.regplot(x='time_since_last_purchase', y='has_churned', data=churn, ci=None, logistic=True)
+
+sns.scatterplot(x='time_since_last_purchase', y='has_churned', data=prediction_data, color='red')
+
+plt.show()
+```
+<kbd><img width="401" alt="Screenshot 2024-01-25 at 6 10 04 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/23dcd72f-5b53-4a2b-a41f-746394b1dff9"> </kbd>
+
+Getting the most likely outcome
+```python
+prediction_data = explanatory_data.assign(has_churned=mdl_recency.predict(explanatory_data))
+
+prediction_data['most_likely_outcome'] = np.round(prediction_data['has_churned'])
+```
+Visualizing most likely outcome
+```python
+sns.regplot(x='time_since_last_purchase', y='has_churned', data=churn, ci=None, logistic=True)
+
+sns.scatterplot(x='time_since_last_purchase', y='most_likely_outcome', data=prediction_data, color='red')
+
+plt.show()
+```
+<kbd><img width="390" alt="Screenshot 2024-01-25 at 6 11 32 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/9a07428c-629d-4010-a09a-69f873f79953"> </kbd>
+
+**Odds ratios**
+
+*Odds ratio* is the probability of something happening divided by the probability that it doesn't.
+<kbd><img width="317" alt="Screenshot 2024-01-25 at 6 12 53 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/a3d0d6ee-5ddd-4a19-bba6-38cb10a0c3fa"></kbd>
+
+<kbd><img width="400" alt="Screenshot 2024-01-25 at 6 13 22 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/5faa2058-5923-4bbb-8936-53f34a822ffe"></kbd>
+
+Calculating odds ratio
+```python
+prediction_data['odds_ratio'] = prediction_data['has_churned'] / (1 - prediction_data['has_churned'])
+```
+Visualizing odds ratio
+```python
+sns.lineplot(x='time_since_last_purchase', y='odds_ratio', data=prediction_data)
+
+plt.axhline(y=1, linestyle='dotted')
+
+plt.show()
+```
+<kbd><img width="388" alt="Screenshot 2024-01-25 at 6 15 18 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/055fcea7-b1a3-42f9-9bde-61470dfa4138"></kbd>
+
+Visualizing log odds ratio
+```python
+sns.lineplot(x='time_since_last_purchase', y='odds_ratio', data=prediction_data)
+
+plt.axhline(y=1, linestyle='dotted')
+plt.yscale('log')
+
+plt.show()
+```
+<kbd><img width="403" alt="Screenshot 2024-01-25 at 6 15 47 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/b72756ef-657c-473e-90cd-0ea0344a5859"></kbd>
+
+Calculating log odds ratio
+```python
+prediction_data['log_odds_ratio'] = np.log(prediction_data['odds_ratio'])
+```
+
+**All predictions together**
+
+| time_since_last_purchase | has_churned | most_likely_outcome | odds_ratio | log_odds_ratio |
+| ----- | ----- | ----- | ----- | ----- |
+| 0 | 0.491 | 0 | 0.966 | -0.035 |
+| 2 | 0.623 | 1 | 1.654 | 0.503 |
+| 4 | 0.739 | 1 | 2.834 | 1.042 |
+| 6 | 0.829 | 1 | 4.856 | 1.580 |
+| ... | ... | ... | ... | ... |
+
+
+
+**Comparing scales**
+
+| Scale | Are values easy to interpret? | Are changes easy to interpret? | Is precise? |
+| ----- | ----- | ----- | ----- | 
+| Probability | ✔ | ✘ | ✔ |
+| Most likely outcome | ✔✔ | ✔ | ✘ | 
+| Odds ratio | ✔ | ✘ | ✔ | 
+| Log odds ratio | ✘ | ✔ | ✔ | 
+
+
+# Quantifying logistic regression fit
+
+**The four outcomes**
+
+|  | predicted false | predicted true |
+| ----- | ----- | ----- |
+| **actual false** | correct | false positive |
+| **actual true** | false negative | correct |
+
+
+Confusion matrix: count of outcomes
+```python
+actual_response = churn['has_churned']
+
+predicted_response = np.round(mdl_recency.predict())
+
+outcomes = pd.DataFrame({'actual_response': actual_response,'predicted_response': predicted_response})
+
+print(outcomes.value_counts(sort=False))
+```
+<kbd> <img width="347" alt="Screenshot 2024-01-25 at 6 26 51 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/4a005f4a-7c34-416e-9811-99e9d0c8965b"></kbd>
+
+Visualizing the confusion matrix
+```python
+conf_matrix = mdl_recency.pred_table()
+
+print(conf_matrix)
+```
+<kbd><img width="223" alt="Screenshot 2024-01-25 at 6 28 15 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/4acfb042-3680-4df2-8c9e-11032f46c0fc"> </kbd>
+
+| true negative | false positive |
+| ----- | ------|
+| **false negative** | **true positive** |
+
+```python
+from statsmodels.graphics.mosaicplot import mosaic
+
+mosaic(conf_matrix)
+```
+<kbd><img width="392" alt="Screenshot 2024-01-25 at 6 27 49 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/2585af46-a203-4c84-803f-a196206b4261"></kbd>
+
+**Accuracy**
+
+*Accuracy* is the proportion of correct predictions.
+<kbd><img width="349" alt="Screenshot 2024-01-25 at 6 30 46 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/e1ee2c81-0997-4367-ac18-8b00e233f0df"></kbd>
+
+```python
+TN = conf_matrix[0,0]
+TP = conf_matrix[1,1]
+FN = conf_matrix[1,0]
+FP = conf_matrix[0,1]
+```
+```python
+acc = (TN + TP) / (TN + TP + FN + FP)
+```
+
+**Sensitivity**
+
+*Sensitivity* is the proportion of true positives.
+<kbd> <img width="248" alt="Screenshot 2024-01-25 at 6 33 04 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/3bed7ea7-0162-49f9-b781-ca54a502db66"></kbd>
+```python
+sense = TP / (FN + TP)
+```
+
+**Specificity**
+
+*Specificity* is the proportion of true negatives.
+<kbd> <img width="239" alt="Screenshot 2024-01-25 at 6 33 55 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/4ba41857-a9b7-45d9-a429-4eb4cccbf9c8"> </kbd>
+```python
+spec = TN / (TN + FP)
+```
