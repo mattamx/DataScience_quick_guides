@@ -120,39 +120,63 @@ print(model_without)
 
 # Making predictions
 
+The fish dataset: bream
+```python
+bream = fish[fish['species'] == 'Bream']
+```
+Plotting mass vs. length
+```python
+sns.regplot(x='length_cm', y='mass_g', data=bream, ci=None)
+plt.show()
+```
+<img width="495" alt="Screenshot 2024-01-24 at 9 19 20 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/28faac40-be75-4a79-80d6-7961b23a6219">
+
+Running the model
+```python
+mdl_mass_vs_length = ols('mass_g ~ length_cm', data=bream).fit()
+print(mdl_mass_vs_length.params)
+```
+<img width="325" alt="Screenshot 2024-01-24 at 9 20 16 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/eb8f6ac6-6365-4b50-80d6-242735dab235">
+
+
 Data on explanatory values to predict
 ```python
-explanatory_data = pd.DataFrame({'col': np.arange(int, int})
+explanatory_data = pd.DataFrame({'length_cm': np.arange(20, 41})
 
-print(model.predict(explanatory_data))
+print(mdl_mass_vs_length.predict(explanatory_data))
 ```
 Predicting inside a DataFrame
 ```python
-explanatory_data = pd.DataFrame({'col': np.arange(int, int}
+explanatory_data = pd.DataFrame({'length_cm': np.arange(20, 41})
 
-predict_data = explanatory_data.assign(column_name = model.predict(explanatory_data))
+prediction_data = explanatory_data.assign(mass_g = mdl_mass_vs_length.predict(explanatory_data))
 ```
+<img width="279" alt="Screenshot 2024-01-24 at 9 23 17 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/3dd937aa-7830-4b8e-bbef-63c262ab5b08">
+
 Showing predictions
 ```python
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 fig = plt.figure()
-sns.regplot(x='explan_col',y='response_col', ci=None, data=df)
+sns.regplot(x='length_cm',y='mass_g', ci=None, data=bream)
 
-sns.regplot(x='explan_col',y='response_col', data=explanatory_data, color='red', marker='s')
+sns.regplot(x='length_cm',y='mass_g', data=explanatory_data, color='red', marker='s')
 
 plt.show()
 ```
+<img width="545" alt="Screenshot 2024-01-24 at 9 23 22 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/a633786c-e6d3-4134-a7ae-0cf95a12a057">
+
 Extrapolating
 - *Extrapolating* means making predictions outside the range of observed data.
 ```python
-explanatory_data = pd.DataFrame({'col': [int]}
+explanatory_data = pd.DataFrame({'length_cm': [10]}
 
-predict_data = explanatory_data.assign(column_name = model.predict(explanatory_data))
+prediction_data = explanatory_data.assign(mass_g = mdl_mass_vs_length.predict(explanatory_data))
 
-print(predict_data)
+print(prediction_data)
 ```
+<img width="499" alt="Screenshot 2024-01-24 at 9 23 54 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/31683c45-392e-42d3-9359-d74de2fec79f">
 
 ## Working with model objects
 
@@ -160,33 +184,39 @@ print(predict_data)
 ```python
 from statsmodels.formula.api import ols
 
-model = ols('response_col ~ explan_col', data=df).fit()
+mdl_mass_vs_length = ols('mass_g ~ length_cm', data=bream).fit()
 
-print(model.params)
+print(mdl_mass_vs_length.params)
 ```
 .fittedvalues attribute
 - Fitted values: predictions on the original dataset
 ```python
-print(model.fittedvalues)
+print(mdl_mass_vs_length.fittedvalues)
 
 # or
 
-explanatory_data = df['col']
-print(model.predict(explanatory_data))
+explanatory_data = bream['length_cm']
+print(mdl_mass_vs_length.predict(explanatory_data))
 ```
 .resid attribute
 - Residuals: actual response values minus predicted response values
 ```python
-print(model.resid)
+print(mdl_mass_vs_length.resid)
 
 # or
 
-print(df['response_col'] - model.fittedvalues)
+print(bream['mass_g'] - mdl_mass_vs_length.fittedvalues)
 ```
+<img width="473" alt="Screenshot 2024-01-24 at 9 26 05 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/30538812-3de0-443b-bd35-e0458b0b4063">
+
+
 .summary()
 ```python
-model.summary()
+mdl_mass_vs_length.summary()
 ```
+<img width="594" alt="Screenshot 2024-01-24 at 9 26 15 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/ae761889-df0e-4045-bc40-7b74895c20e6">
+
+
 
 ## Regression to the mean
 
@@ -353,3 +383,248 @@ prediction_data = explanatory_data.assign(sqrt_n_impressions = model_ad.predict(
 print(prediction_data)
 ```
 <img width="583" alt="Screenshot 2024-01-24 at 5 33 22 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/99417d57-7bb9-4a10-8161-15cd6d194ee8">
+
+# Quantifying model fit
+
+**Bream and perch models**
+<img width="1084" alt="Screenshot 2024-01-24 at 8 48 40 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/623c90c1-8d3a-4bb1-b3ea-131181e0ae89">
+
+
+**Coefficient of determination**
+
+Sometimes called "r-squared" or "R-squared"
+> The proportion of the variance in the response variable that is predictable from the explanatory variable
+
+- `1` means a perfect fit
+- `0` means the worst possible fit
+
+.summary()
+```python
+mdl_bream = ols('mass_g ~ length_cm', data=bream).fit()
+
+print(mdl_bream.summary())
+```
+<img width="1025" alt="Screenshot 2024-01-24 at 8 49 19 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/f467b25a-8db7-47ef-bece-682b0ffb7650">
+
+.rsquared attribute
+```python
+print(mdl_bream.rsquared)
+
+# or
+
+coeff_determination = bream['length_cm'].corr(bream['mass_g']) ** 2
+print(coeff_determination)
+```
+
+Residual standard error (RSE)
+
+<img width="506" alt="Screenshot 2024-01-24 at 8 51 39 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/9df992e6-281c-4942-8f72-fe7c04b97709">
+
+- A "typical" difference between a prediction and observed response
+- It has the same unit as the respone variable
+- MSE = RSE²
+
+.mse_resid attribute
+```python
+mse = mdl_bream.mse_resid
+print('mse: ', mse)
+
+rse = np.sqrt(mse)
+print('rse: ', rse)
+```
+Calculating RSE: residuals squared
+```python
+residuals_sq = mdl_bream.resid ** 2
+
+print('residuals sq: \n', residuals_sq)
+```
+Calculating RSE: sum of residuals squared
+```python
+residuals_sq = mdl_bream.resid ** 2
+
+resid_sum_of_sq = sum(residuals_sq)
+
+print('resid sum of sq: ', resid_sum_of_sq)
+```
+Calculating RSE: degrees of freedom
+
+- *Degrees of freedom* equals the number of observations minus the number of model coefficients
+
+```python
+residuals_sq = mdl_bream.resid ** 2
+
+resid_sum_of_sq = sum(residuals_sq)
+
+deg_freedom = len(bream.index) - 2
+
+print('deg freedom: ', deg_freedom)
+```
+Calculating RSE: square root of ratio
+```python
+residuals_sq = mdl_bream.resid ** 2
+
+resid_sum_of_sq = sum(residuals_sq)
+
+deg_freedom = len(bream.index) - 2
+
+rse = np.sqrt(resid_sum_of_sq/deg_freedom)
+
+print('rse: ', rse)
+```
+
+**Interpreting RSE**
+
+`mdl_bream` has an RSE of `74`
+> The difference between predicted bream masses and observed dream masses is typically about 74g
+
+Root-mean-square-error (RMSE)
+```python
+residuals_sq = mdl_bream.resid ** 2
+
+resid_sum_of_sq = sum(residuals_sq)
+
+deg_freedom = len(bream.index) - 2
+
+rse = np.sqrt(resid_sum_of_sq/deg_freedom)
+
+print('rse: ', rse)
+```
+```python
+residuals_sq = mdl_bream.resid ** 2
+
+resid_sum_of_sq = sum(residuals_sq)
+
+n_obs = len(bream.index)
+
+rmse = np.sqrt(resid_sum_of_sq/n_obs)
+
+print('rse: ', rmse)
+```
+
+# Visualizing model fit
+
+**Residual properties of a good fit**
+
+- Residuals are normally distributed
+- The mean of the residuals is zero
+
+Bream and perch example
+
+Bream: the 'good' model
+```python
+mdl_bream = ols('mass_g ~ length_cm' data=bream).fit()
+```
+<img width="496" alt="Screenshot 2024-01-24 at 9 00 28 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/9796aa72-7596-4876-ba67-4557862afd61">
+
+
+Perch: the 'bad' model
+```python
+mdl_perch = ols('mass_g ~ length_cm' data=perch).fit()
+```
+<img width="508" alt="Screenshot 2024-01-24 at 9 00 44 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/5585a943-8fd2-48fe-8d06-31b839f08d65">
+
+Residuals vs. fitted
+<img width="1059" alt="Screenshot 2024-01-24 at 9 01 35 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/c50a0b8f-48b8-4d0c-af82-8def8b193905">
+
+Q-Q plot
+<img width="1059" alt="Screenshot 2024-01-24 at 9 02 02 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/7d310793-e61f-42f6-bf4c-3eec2ef1fec5">
+
+
+Scale-location plot
+<img width="1113" alt="Screenshot 2024-01-24 at 9 02 22 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/037d8b8a-6485-4d68-902d-aa10568b40cb">
+
+## residplot()
+```python
+sns.residplot(x='length_cm', y='mass_g', data=bream, lowess=True)
+plt.xlabel('Fitted values')
+plt.ylabel('Residuals')
+```
+<img width="499" alt="Screenshot 2024-01-24 at 9 03 43 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/4b301725-b429-4dbc-8793-a57f5628dd04">
+
+## qqplot()
+```python
+from statsmodels.api import qqplot
+
+qqplot(data=mdl_bream.resid, fit=True, line='45')
+```
+<img width="518" alt="Screenshot 2024-01-24 at 9 04 23 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/db767c04-31c9-4047-b062-e22a441242a9">
+
+## Scale-location plot
+```python
+model_norm_residuals_bream = mdl_bream.get_influence().resid_stundentized_internal
+model_norm_residuals_abs_sqrt_bream = np.sqrt(np.abs(model_norm_residuals_bream))
+
+sns.regplot(x=mdl_bream.fittedvalues, y=model_norm_residuals_abs_sqrt_bream, ci=None, lowess=True)
+
+plt.xlabel('Fitted values')
+plt.ylabel('Sqrt of abs val of stdized residuals')
+```
+<img width="461" alt="Screenshot 2024-01-24 at 9 04 48 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/97019304-b534-45d7-a91d-9dc21be95ee4">
+
+# Outliers, leverage and influence
+
+Roach dataset
+```python
+roach = fish[fish['species'] == 'Roach']
+```
+
+Extreme explanatory values
+```python
+roach['extreme_l'] = ((roach['length_cm'] < 15) | (roach['length_cm'] > 26))
+
+fig = plt.figure()
+sns.regplot(x='length_cm', y='mass_g', data=roach, ci=None)
+sns.scatterplot(x='length_cm', y='mass_g', hue='extreme_l', data=roach)
+```
+<img width="541" alt="Screenshot 2024-01-24 at 9 09 36 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/54c917d4-a9dc-4576-a60f-9c73e2b8423e">
+
+Response values away from the regression line
+```python
+roach['extreme_m'] = roach['mass_g'] < 1
+
+fig = plt.figure()
+sns.regplot(x='length_cm', y='mass_g', data=roach, ci=None)
+sns.scatterplot(x='length_cm', y='mass_g', hue='extreme_m', data=roach)
+```
+<img width="486" alt="Screenshot 2024-01-24 at 9 10 18 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/98f3a5dc-63a8-4bed-ab43-e1368fb44ddf">
+
+## Leverage and influence
+
+- *Leverage* is a measure of how extreme the explanatory values are
+- *Influence* measures how much the model would change if you left the observation out of the dataset when modeling
+
+
+.get_incluence() and .summary_frame()
+```python
+mdl_roach = ols('mass_g ~ length_cm', data=roach).fit()
+summary_roach = mdl_roach.get_incluence().summary_frame()
+roach['leverage'] = summary_roach['hat_diag']
+
+print(roach.head())
+```
+<img width="519" alt="Screenshot 2024-01-24 at 9 14 30 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/f37be8f2-9cb5-4b04-9443-06e87753bf09">
+
+### Cook's distance
+
+- *Cook's distance* is the most common measure of influence
+  
+```python
+roach['cooks_dist'] = summary_roach['cooks_d']
+print(roach.head())
+```
+<img width="675" alt="Screenshot 2024-01-24 at 9 14 36 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/b1deaaaf-5094-4acc-a833-6f1a0f43aed7">
+
+Most influential roaches
+```python
+print(roach.sort_values('cooks_dist', ascending = False))
+```
+<img width="878" alt="Screenshot 2024-01-24 at 9 15 41 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/1a79f281-82ce-4558-ac08-cae71e7dd86c">
+
+Removing the most influential roach
+```python
+roach_not_short = roach[roach['length_cm'] != 12.9]
+
+sns.regplot(x='length_cm', y='mass_g', data=roach, ci=None, line_kws={'color':'green'})
+sns.regplot(x='length_cm', y='mass_g', data=roach_not_short, ci=None, line_kws={'color':'red'})
+```
+<img width="513" alt="Screenshot 2024-01-24 at 9 15 46 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/82e84114-2a88-406a-9281-439527facdbe">
