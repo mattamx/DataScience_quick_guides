@@ -463,7 +463,7 @@ errors.plot(x='sample_size', y='relative_error', kind='line')
 plt.show()
 ```
 
-Propoerties
+Properties
 
 - Really noisy, particularly for small samples
 - Amplitude is initially steep, then flattens
