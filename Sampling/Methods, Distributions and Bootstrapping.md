@@ -607,8 +607,8 @@ Population & sampling distribution standard deviation
 coffee_ratings['total_cup_points'].std(ddof=0)
 ```
 
-- Specicy `ddof=0` when calling `.std()` on populations
-- Specicy `ddof=1` when calling `.std()` on samples or sampling distributions
+- Specify `ddof=0` when calling `.std()` on populations
+- Specify `ddof=1` when calling `.std()` on samples or sampling distributions
 
 | Sample size | Std dev sample mean
 | ----- | -----
