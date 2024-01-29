@@ -508,6 +508,134 @@ plt.show()
 
 # Approximate sampling distributions
 
+Dice example
+```python
+dice = expand_grid(
+  {'die1': [1,2,3,4,5,6],
+  'die2': [1,2,3,4,5,6],
+  'die3': [1,2,3,4,5,6],
+  'die4': [1,2,3,4,5,6],
+  }
+)
+```
+Mean roll
+```python
+dice['mean_roll'] = (dice['die1'] + dice['die2'],
+                    dice['die3'] + dice['die4']) / 4
+
+print(dice)
+```
+<kbd><img width="304" alt="Screenshot 2024-01-29 at 6 43 03 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/157b0037-a14f-4162-ab09-86385b435ade">
+</kbd>
+
+
+Exact sampling distribution
+```python
+dice['mean_roll'] = dice['mean_roll'].astype('category')
+dice['mean_roll'].value_counts(sort=False).plot(kind='bar')
+```
+<kbd><img width="460" alt="Screenshot 2024-01-29 at 6 44 42 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/1fe9ced6-46bc-4248-8d53-63c9128135a9">
+</kbd>
+
+The number of outcomes increases fast
+```python
+n_dice = list(range(1,101))
+n_outcomes = []
+
+for n in n_dice:
+  n_outcomes.append(6**n)
+
+outcomes = pd.DataFrame({'n_dice': n_dice, 'n_outcomes': n_outcomes})
+
+outcomes.plot(x='n_dice', y='n_outcomes', kind='scatter')
+plt.show()
+```
+<kbd><img width="465" alt="Screenshot 2024-01-29 at 6 46 31 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/17a4712d-6c51-46fb-8bf8-db20999565ab">
+</kbd>
+
+Simulating the mean of four dice rolls
+```python
+import numpy as np
+
+sample_means_1000 = []
+for i in range(1000):
+  sample_means_1000.append(
+    np.random.choice(list(range(1,7)), size=4, replace=True).mean()
+  )
+
+print(sample_means_1000)
+```
+
+Approximate sampling distribution
+```python
+plt.hist(sample_means_1000, bins=20)
+```
+<kbd><img width="451" alt="Screenshot 2024-01-29 at 6 48 32 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/daf41e99-603f-4777-8fb0-fce8dc210b87">
+</kbd>
+
+
+# Standard errors and the Central Limit Theorem
+
+**Sampling distribution of mean cup points**
+
+<kbd><img width="848" alt="Screenshot 2024-01-29 at 6 49 17 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/08a8ef41-1b50-4f01-8edd-766f9b041b4b">
+</kbd>
+
+**Consequences of the central limit theorem**
+
+> Averages of independent samples have approximately **normal distributions**
+
+As the sample size increases,
+- The distribution of the averages gets *closer to being normally distributed*
+- The width of the sampling distribution gets narrower
+
+Population & sampling distribution means
+```python
+coffee_ratings['total_cup_points'].mean()
+```
+
+Use `np.mean()` on each approximate sampling distribution
+| Sample size | Mean sample mean
+| ----- | -----
+| 5 | 82.18420719999999
+| 20 | 82.1558634
+| 80 | 82.14510154999999
+| 320 | 82.154017925
+
+Population & sampling distribution standard deviation
+```python
+coffee_ratings['total_cup_points'].std(ddof=0)
+```
+
+- Specicy `ddof=0` when calling `.std()` on populations
+- Specicy `ddof=1` when calling `.std()` on samples or sampling distributions
+
+| Sample size | Std dev sample mean
+| ----- | -----
+| 5 | 1.1886358227738543
+| 20 | 0.5940321141669805
+| 80 | 0.2934024263916487
+| 320 | 0.13095083089190876
+
+
+**Population mean over square root sample size**
+
+| Sample size | Std dev sample mean | Calculation | Result
+| ----- | ----- | ----- | -----
+| 5 | 1.1886358227738543 | 2.685858187306438 / sqrt(5) | 1.201
+| 20 | 0.5940321141669805 | 2.685858187306438 / sqrt(20) | 0.601
+| 80 | 0.2934024263916487 | 2.685858187306438 / sqrt(80) | 0.300
+| 320 | 0.13095083089190876 | 2.685858187306438 / sqrt(320) | 0.150
+
+Standard error
+- Standard deviation of the sampling distribution
+- Important tool in understanding sampling variability
+
+  
+```python
+
+```
+
 ```python
 
 ```
