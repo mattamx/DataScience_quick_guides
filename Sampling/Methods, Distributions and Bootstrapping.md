@@ -182,6 +182,7 @@ plt.show()
 ```
 <kbd> <img width="320" alt="Screenshot 2024-01-29 at 4 57 21 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/ab5402a8-06f8-4dcd-a8ff-991d6585e5f3">
 </kbd>
+
 Systemic sampling is only safe if we don't see a patter in this scatter plot
 
 Making systemic sampling safe
@@ -193,6 +194,7 @@ plt.show()
 ```
 
 <kbd> <img width="292" alt="Screenshot 2024-01-29 at 4 59 22 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/d97e404f-91f7-437a-b21b-24de46d995e9"> </kbd>
+
 Shuffling rows + systematic sampling is the same as simple random sampling
 
 # Stratified and weighted random sampling
@@ -268,30 +270,146 @@ coffee_ratings_weight['country_of_origin'].value_counts(normalize=True)
 
 
 # Cluster sampling
-```python
 
+**Stratified sampling vs. cluster sampling**
+
+Stratified sampling
+- Split the population into subgroups
+- Use simple random sampling on every subgroup
+
+Cluster sampling
+- Use simple random sampling to pick some subgroups
+- USe simple random sampling on only those subgroups
+
+
+Varities of coffee
+```python
+varieties_pop = len(coffee_ratings['variety'].unique())
 ```
 
+Stage 1: sampling for subgroups
 ```python
-
+import random
+varieties_samp = random.sample(varieties_pop, k=3)
 ```
 
+Stage 2: sampling each group
 ```python
+variety_condition = coffee_ratings['variety'].isin(varieties_samp)
+coffee_ratings_cluster = coffee_ratings[variety_condition]
 
+coffee_ratings_variety['variety'] = coffee_ratings_cluster['variety'].cat.remove_unused_categories()
+
+coffee_ratings_cluster.groupby('variety').sample(n=5, random_state=2021)
 ```
 
-```python
+**Multistage sampling**
 
+- Cluster sampling is a type of multistage sampling
+- Can have > 2 stages
+- E.g., countrywide surveys may sample states, counties, cities, and neighborhoods
+
+# Comparing sampling methods
+
+Review of sampling techniques - setup
+```python
+top_counted_countries = ["Mexico", "Colombia", "Guatemala",
+                        "Brazil", "Taiwan", "United States (Hawaii)"]
+
+subset_condition = coffee_ratings['country_of_origin'].isin(top_counted_countries)
+coffe_ratings_top = coffee_ratings[subset_condition]
+
+coffee_ratings_top.shape
+```
+Review of simple random sampling
+```python
+coffee_ratings_srs = coffee_ratings_top.sample(frac=1/3, random_state=2021)
+coffee_ratings_srs.shape
+```
+Review of stratified sampling
+```python
+coffee_ratings_strat = coffee_ratings_top.groupby('country_of_origin')\
+    .sample(frac=1/3, random_state=2021)
+coffee_ratings_strat.shape
+```
+Review of cluster sampling
+```python
+import random
+
+top_countries_samp = random.sample(top_counted_countries, k=2)
+top_condition = coffee_ratings_top['country_of_origin'].isin(top_countries_samp)
+
+coffee_ratings_cluster = coffee_ratings_top[top_condition]
+coffee_ratings_cluster['country_of_origin'] = coffee_ratings_cluster['country_of_origin']\
+    .cat.remove_unsused_categories()
+
+coffee_ratings_clust = coffee_ratings_cluster.groupby('country_of_origin')\
+    .sample(n=len(coffee_ratings_top) // 6)
+coffee_ratings_clust.shape
 ```
 
-```python
+**Calculating mean cup points**
 
+Population
+```python
+coffee_ratings_top['total_cup_points'].mean()
+```
+<kbd><img width="141" alt="Screenshot 2024-01-29 at 5 51 19 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/c1a1f385-cc59-4b61-8347-6f1e50a9598f">
+</kbd>
+
+Simple random sample
+```python
+coffee_rating_srs['total_cup_points'].mean()
+```
+<kbd><img width="135" alt="Screenshot 2024-01-29 at 5 51 25 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/12e31403-806c-4125-b430-4e5388414c64">
+</kbd>
+
+Stratified sample
+```python
+coffee_ratings_strat['total_cup_points'].mean()
+```
+<kbd><img width="139" alt="Screenshot 2024-01-29 at 5 51 52 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/ebfae54b-d32f-41d8-93f4-c9f05411940f">
+</kbd>
+
+Cluster sample
+```python
+coffee_ratings_clust['total_cup_points'].mean()
+```
+<kbd><img width="139" alt="Screenshot 2024-01-29 at 5 51 58 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/6cca148e-cbe1-40f1-a01f-2c511fd000f9">
+</kbd>
+
+**Mean cup points by country: simple random**
+
+Population
+```python
+coffee_ratings_top.groupby('country_of_origin')['total_cup_points'].mean()
 ```
 
+Simple random sample
 ```python
-
+coffee_ratings_srs.groupby('country_of_origin')['total_cup_points'].mean()
 ```
 
-```python
+**Mean cup points by country: stratified**
 
+Population
+```python
+coffee_ratings_top.groupby('country_of_origin')['total_cup_points'].mean()
+```
+
+Stratified sample
+```python
+coffee_ratings_strat.groupby('country_of_origin')['total_cup_points'].mean()
+```
+
+**Mean cup points by country: cluster**
+
+Population
+```python
+coffee_ratings_top.groupby('country_of_origin')['total_cup_points'].mean()
+```
+
+Cluster sample
+```python
+coffee_ratings_clust.groupby('country_of_origin')['total_cup_points'].mean()
 ```
