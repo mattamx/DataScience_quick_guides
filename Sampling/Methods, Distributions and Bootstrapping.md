@@ -413,3 +413,105 @@ Cluster sample
 ```python
 coffee_ratings_clust.groupby('country_of_origin')['total_cup_points'].mean()
 ```
+
+# Relative error of point estimates
+
+Sample size is the number of rows
+```python
+len(coffee_ratings.sample(n=300)) # 300
+
+len(coffee_ratings.sample(frac=0.25)) # 334
+```
+
+Various sample sizes
+```python
+coffee_ratings['total_cup_points'].mean() # 82.151
+```
+
+```python
+coffee_ratings.sample(n=10)['total_cup_points'].mean() # 83.027
+```
+
+```python
+coffee_ratings.sample(n=100)['total_cup_points'].mean() # 82.489
+```
+
+```python
+coffee_ratings.sample(n=1000)['total_cup_points'].mean() # 82.118
+```
+
+**Relative errors**
+
+Population parameter
+```python
+population_mean = coffee_ratings['total_cup_points'].mean()
+```
+Point estiamte
+```python
+sample_mean = coffee_ratings.sample(n=sample_size)['total_cup_points'].mean()
+```
+Relative error as a percentage
+```python
+rel_error_pct = 100 * abs(population_mean - sample_mean) / population_mean
+```
+
+Relative error vs. sample size
+```python
+import matplotlib.pyplot as plt
+
+errors.plot(x='sample_size', y='relative_error', kind='line')
+plt.show()
+```
+
+Propoerties
+
+- Really noisy, particularly for small samples
+- Amplitude is initially steep, then flattens
+- Relative error decreases to zero (when the sample size = population)
+
+<kbd><img width="436" alt="Screenshot 2024-01-29 at 6 01 40 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/3b553420-caee-4d4a-b17e-72d12db8a44c"></kbd>
+
+
+# Creating a sampling distribution
+
+Same code, 1000 times
+```python
+mean_cup_points_1000 = []
+
+for i in range(1000):
+  mean_cup_points_1000.append(
+      coffee_ratings.sample(n=30)['total_cup_points'].mean()
+  )
+
+print(mean_cup_points_1000)
+```
+<kbd><img width="741" alt="Screenshot 2024-01-29 at 6 03 30 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/aacaa922-8e30-4584-b4f7-974ab279dd83">
+</kbd>
+
+Distribution of sample means for size 30
+```python
+import matplotlib.pyplot as plt
+
+plt.hist(mean_cup_points_1000, bins=30)
+plt.show()
+```
+> A *sampling distribution* is a distribution of replicates of point estimates
+
+<kbd><img width="367" alt="Screenshot 2024-01-29 at 6 04 59 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/28751d8f-cce4-418a-9528-05458b95136f">
+</kbd>
+
+**Different sample sizes**
+
+<kbd><img width="737" alt="Screenshot 2024-01-29 at 6 05 44 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/ca7807e6-7120-49f3-bfca-ee7da3a27619">
+</kbd>
+
+
+# Approximate sampling distributions
+
+```python
+
+```
+
+```python
+
+```
