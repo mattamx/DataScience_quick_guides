@@ -632,7 +632,7 @@ Standard error
 - Important tool in understanding sampling variability
 
 
-# Bootstrapping
+# Introduction to Bootstrapping
 
 Why sample with replacement?
 - `coffee_ratings`: a sample of a larger population of all coffees
@@ -707,7 +707,7 @@ plt.show()
 </kbd>
 
 
-# Comparing sampling and bootstrap distributions
+## Comparing sampling and bootstrap distributions
 
 Coffee focused subset
 ```python
@@ -788,4 +788,5 @@ Interpreting the standard errors
 - Estimated standard error -> standard deviation of the bootstrapping distribution for a sample statistic
 <kbd><img width="452" alt="Screenshot 2024-01-29 at 8 01 25 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/c3f5d5e9-0fcb-469c-a42a-041ea1f0c310"></kbd>
 
-# Confidence Intervals
+## Confidence Intervals
+
