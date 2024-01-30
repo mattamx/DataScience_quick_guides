@@ -790,46 +790,60 @@ Interpreting the standard errors
 
 ## Confidence Intervals
 
-```python
+- "Values within one standard deviation of the mean" includes a large number of values from each of these distributions
 
+Bootstrap distribution of mean flavor
+```python
+import matplotlib.pyplot as plt
+plt.hist(coffee_boot_distn, bins=15)
+plt.show()
 ```
+<kbd><img width="353" alt="Screenshot 2024-01-30 at 3 19 30 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/cd8839a6-5dd9-4cde-9b11-c3b902eab77b">
+</kbd>
 
+Mean of the resamples
 ```python
-
+import numpy as np
+np.mean(coffee_boot_distn) # 7.513
 ```
+<kbd><img width="346" alt="Screenshot 2024-01-30 at 3 19 35 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/640bf969-6223-40b0-8312-c4249c6210c7">
+</kbd>
 
+Mean plus or minus one standard deviation
 ```python
-
+np.mean(coffee_boot_distn) - np.std(coffee_boot_distn, ddof=1) # 7.497
+np.mean(coffee_boot_distn) + np.std(coffee_boot_distn, ddof=1) # 7.520
 ```
+<kbd><img width="358" alt="Screenshot 2024-01-30 at 3 19 40 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/0ef57c1f-fc96-4545-a686-28832bb3ded2">
+</kbd>
 
+Quantile method for confidence intervals
 ```python
-
+np.quantile(coffee_boot_distn, 0.025) # 7.481
+np.quantile(coffee_boot_distn, 0.975) # 7.544
 ```
+<kbd><img width="388" alt="Screenshot 2024-01-30 at 3 20 49 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/991da407-9716-4b65-8605-c4a3c392d1ef">
+</kbd>
 
+Inverse cumulative distribution function
+
+- PDF: The bell curve
+- CDF: integrate to get area under the bell curve
+- Inv. CDF: flip x and y axes
 ```python
-
+from scipy.stats import norm
+norm.ppf(quantile, loc=0, scale=1)
 ```
+<kbd><img width="388" alt="Screenshot 2024-01-30 at 3 23 16 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/f4e37b64-80f6-4711-9a5e-166af33769f6">
+</kbd>
 
+Standard error method for confidence interval
 ```python
+point_estimate = np.mean(coffee_boot_distn) # 7.513
 
-```
+std_error = np.std(coffee_boot_distn, ddof=1) # 0.0160
 
-```python
-
-```
-
-```python
-
-```
-
-```python
-
-```
-
-```python
-
-```
-
-```python
-
+from scipy.stats import norm
+lower = norm.ppd(0.025, loc=point_estimate, scale=std_error) # 7.481
+upper = norm.ppd(0.975, loc=point_estimate, scale=std_error) # 7.544
 ```
