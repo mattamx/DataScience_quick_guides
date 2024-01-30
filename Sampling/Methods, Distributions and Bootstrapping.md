@@ -53,7 +53,7 @@ pts_vs_flavor_pop['flavor'].mean() # 7.526
 pts_vs_flavor_samp['flavor'].mean() # 7.485
 ```
 
-# Convenience sampling
+## Convenience sampling
 
 Convenience sampling coffee ratings
 ```python
@@ -90,7 +90,7 @@ plt.show()
 
 <kbd> <img width="744" alt="Screenshot 2024-01-29 at 4 43 04 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/68e2f663-7f1f-4987-9b84-1e5fbe63d465"> </kbd>
 
-# Pseudo-random number generation
+## Pseudo-random number generation
 
 - Pseudo-random number generation is **cheap** and **fast**
 - Next "random" number calcualted from previous "random" number
@@ -197,7 +197,7 @@ plt.show()
 
 Shuffling rows + systematic sampling is the same as simple random sampling
 
-# Stratified and weighted random sampling
+## Stratified and weighted random sampling
 
 Coffees by country
 ```python
@@ -269,7 +269,7 @@ coffee_ratings_weight['country_of_origin'].value_counts(normalize=True)
 </kbd>
 
 
-# Cluster sampling
+## Cluster sampling
 
 **Stratified sampling vs. cluster sampling**
 
@@ -309,7 +309,7 @@ coffee_ratings_cluster.groupby('variety').sample(n=5, random_state=2021)
 - Can have > 2 stages
 - E.g., countrywide surveys may sample states, counties, cities, and neighborhoods
 
-# Comparing sampling methods
+## Comparing sampling methods
 
 Review of sampling techniques - setup
 ```python
@@ -472,7 +472,7 @@ Properties
 <kbd><img width="436" alt="Screenshot 2024-01-29 at 6 01 40 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/3b553420-caee-4d4a-b17e-72d12db8a44c"></kbd>
 
 
-# Creating a sampling distribution
+## Creating a sampling distribution
 
 Same code, 1000 times
 ```python
@@ -506,7 +506,7 @@ plt.show()
 </kbd>
 
 
-# Approximate sampling distributions
+## Approximate sampling distributions
 
 Dice example
 ```python
@@ -574,7 +574,7 @@ plt.hist(sample_means_1000, bins=20)
 </kbd>
 
 
-# Standard errors and the Central Limit Theorem
+## Standard errors and the Central Limit Theorem
 
 **Sampling distribution of mean cup points**
 
