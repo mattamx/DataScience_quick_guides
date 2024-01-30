@@ -631,15 +631,161 @@ Standard error
 - Standard deviation of the sampling distribution
 - Important tool in understanding sampling variability
 
-  
-```python
 
+# Bootstrapping
+
+Why sample with replacement?
+- `coffee_ratings`: a sample of a larger population of all coffees
+- Each coffee in our sample represents many different hypothetical population coffees
+- Sampling with replacement is a proxy
+
+
+Coffee data preparation
+```python
+coffee_focus = coffee_ratings[['variety', 'country_of_origin', 'flavor']]
+coffee_focus = coffee_focus.reset_index()
+```
+<kbd><img width="324" alt="Screenshot 2024-01-29 at 7 49 08 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/a63d8f09-5703-452b-a630-7223ed015f65">
+</kbd>
+
+Resampling with .sample()
+```python
+coffee_resamp = coffee_focus.sample(frac=1, replace=True)
+```
+<kbd><img width="336" alt="Screenshot 2024-01-29 at 7 48 43 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/ddb31b9e-daf3-48aa-b791-afa8eb487c50">
+</kbd>
+
+Repeated coffees
+```python
+coffee_resamp['index'].value_counts()
+```
+<kbd><img width="316" alt="Screenshot 2024-01-29 at 7 48 11 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/dc38c890-544d-43e7-a813-a869305bcbba">
+</kbd>
+
+Missing coffees
+```python
+num_unique_coffees = len(coffee_resamp.drop_duplicates(subset='index')) # 868
+
+len(coffee_ratings) - num_unique_coffees # 470
 ```
 
-```python
+**Bootstrapping**
 
+> The opposite of sampling from a population
+
+*Sampling*: going from a population to a smaller sample
+*Bootstrapping*: building up a theoretical population from the sample
+
+Bootstrapping use case:
+- Develop understanding of sampling variability using a single sample
+
+Bootstrapping process:
+1. Make a resample of the same size as the original sample
+2. Calculate the statistic of interest for this bootstrap sample
+3. Repeat steps 1 and 2 many times
+
+The resulting statistics are *bootstrap statistics*, and they for a *bootstrap distribution*
+
+Bootstrapping coffee mean flavor
+```python
+import numpy as np
+
+mean_flavors_1000 = []
+for i in range(1000):
+  mean_flavors_1000.append(
+    np.mean(coffee_sample.sample(frac=1, replace=True)['flavor'])
+  )
+```
+Bootstrapping distribution histogram
+```python
+import matplotlib.pyplot as plt
+
+plt.hist(mean_flavors_1000)
+plt.show()
+```
+<kbd><img width="338" alt="Screenshot 2024-01-29 at 7 47 13 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/f0906298-de22-4a35-b775-d70f8e325614">
+</kbd>
+
+
+# Comparing sampling and bootstrap distributions
+
+Coffee focused subset
+```python
+coffee_sample = coffee_ratings[['variety', 'country_of_origin', 'flavor']]\
+    .reset_index().sample(n=500)
 ```
 
+The bootstrap of mean coffee flavors
 ```python
+import numpy as np
 
+mean_flavors_5000 = []
+for i in range(5000):
+  mean_flavors_5000.append(
+    np.mean(coffee_sample.sample(frac=1, replace=True)['flavor'])
+
+bootstrap_distn = mean_flavors_5000
 ```
+
+Mean flavor bootstrap distribution
+```python
+import matplotlib.pyplot as plt
+
+plt.hist(bootstrap_distn, bins=15)
+plt.show()
+```
+<kbd><img width="346" alt="Screenshot 2024-01-29 at 7 51 18 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/26248ed6-7834-4706-9c00-aa96f23b3c90">
+</kbd>
+
+**Sample, bootstrap distribution, population means**
+
+Sample mean
+```python
+coffee_sample['flavor'].mean() # 7.5132200000000005
+```
+
+True population mean
+```python
+coffee_ratings['flavor'].mean() # 7.526046337817639
+```
+
+Estimated population mean
+```python
+np.mean(bootstrap_distn) # 7.513357731999999
+```
+
+Interpreting the means
+
+Bootstrap distribution mean:
+- Usually close to the sample mean
+- May not be a good estimate of the population mean
+- ***Bootstrapping cannot correct biases from sampling***
+
+**Sample sd vs. bootstrap distribution sd**
+
+Sample standard deviation
+```python
+coffee_sample['flavor'].std() # 0.3540883911928703
+```
+
+True standard deviation
+```python
+coffee_ratings['flavor'].std(ddof=0) # 0.34125481224622645
+```
+
+Estimated population standard deviation
+```python
+standard_error = np.std(bootstrap_distn, ddof=1)
+```
+*Standard error* is the standard deviation of the statistic of interest
+```python
+standard_error * np.sqrt(500) # 0.3525938058821761
+```
+***Standard error times square root of sample size estimates the population standard deviation***
+
+Interpreting the standard errors
+
+- Estimated standard error -> standard deviation of the bootstrapping distribution for a sample statistic
+<kbd><img width="452" alt="Screenshot 2024-01-29 at 8 01 25 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/c3f5d5e9-0fcb-469c-a42a-041ea1f0c310"></kbd>
+
+# Confidence Intervals
