@@ -16,7 +16,7 @@ Creating a personal reference repository of helpful 'cheat sheets' for all thing
 | SQL | MySQL | [Link](https://www.mysql.com/) | 🚧
 | SQL | [PostgreSQL](SQL/PostgreSQL.md) | [Link](https://www.postgresql.org/) | ✔️
 | SQL | Basics | Link | 🚧
-| Sampling | Methods, Distributions and Bootstrapping | Link | 🚧
+| Sampling | [Methods, Distributions and Bootstrapping](Sampling/Methods, Distributions and Bootstrapping.md) | Link | ✔️
 | Linear Algebra | [SciPy](Linear%20Algebra/SciPy.md) | [Link](https://docs.scipy.org/doc/scipy/) | ✔️
 | Machine Learning | [Scikit-learn](Machine%20Learning/Scikit-learn.md) | [Link](https://scikit-learn.org/stable/index.html) | ✔️
 | Deep Learning | PyTorch | [Link](https://pytorch.org/docs/stable/index.html) | 🚧
