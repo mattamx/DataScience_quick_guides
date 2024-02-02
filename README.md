@@ -20,6 +20,8 @@ Creating a personal reference repository of helpful 'cheat sheets' for all thing
 | Hypothesis Testing | TBD | Link | 🚧
 | Linear Algebra | [SciPy](Linear%20Algebra/SciPy.md) | [Link](https://docs.scipy.org/doc/scipy/) | ✔️
 | Machine Learning | [Scikit-learn](Machine%20Learning/Scikit-learn.md) | [Link](https://scikit-learn.org/stable/index.html) | ✔️
+| Machine Learning | Supervised Learning | Link | 🚧
+| Machine Learning | Unsupervised Learning | Link | 🚧
 | Deep Learning | PyTorch | [Link](https://pytorch.org/docs/stable/index.html) | 🚧
 | Neural Networks | Keras | [Link](https://keras.io/getting_started/) | 🚧
 | Natural Language Processing | spaCy | [Link](https://spacy.io/usage#quickstart) | 🚧
