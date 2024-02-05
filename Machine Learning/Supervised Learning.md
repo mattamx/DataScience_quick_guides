@@ -399,14 +399,476 @@ plt.show()
 <kbd><img width="473" alt="Screenshot 2024-02-04 at 7 29 06 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/5ba61b33-1bd8-48e6-a0c1-38cb234e76fa">
 </kbd>
 
-```python
 
+# How good is your model?
+
+Classification metrics
+
+- Measuring model performance with accuracy:
+  - Fraction of correctly classified samples
+  - Not always a useful metric
+ 
+Class imbalance
+
+- Classification for predicting fraudulent bank transactions
+  - 99% of transactions are legitimate; 1% are fraudulent
+- Could build a classifier that predicts NONE of the transactions are fraudulent
+  - 99% accurate
+  - But terrible at actually predicting fraudulent transactions
+  - Fails at its original purpose
+- Class imbalance: uneven frequency of classes
+- Need a different way to assess performance
+
+Assessing classification performance
+
+<kbd><img width="769" alt="Screenshot 2024-02-05 at 11 33 14 AM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/9b9202d8-bca3-4fed-9959-46820a339c34">
+</kbd>
+
+Precision
+
+<kbd><img width="620" alt="Screenshot 2024-02-05 at 11 33 53 AM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/fa677139-bf91-49eb-bf2d-373677a5230e">
+</kbd>
+
+- High precision = lower false positive rate
+- High precision: not many legitimate transactions are predicted to be fraudulent
+
+Recall
+
+<kbd><img width="601" alt="Screenshot 2024-02-05 at 11 34 00 AM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/4d50d44b-8464-450c-ac25-b0ee7ad50178">
+</kbd>
+
+- High recall = lower false negative rate
+- High recall: predicted most fraudulent transactions correctly
+
+F-1 Score
+
+<kbd>
+</kbd>
+
+Confusion matrix in scikit-learn
+```python
+from sklearn.metrics import classification_report, confusion_matrix
+knn = KNeighborsClassifier(n_neighbors=7)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
+knn.fit(X_train, y_train)
+y_pred = knn.predict(X_test)
+print(confusion_matrix(y_test, y_pred))
+```
+<kbd><img width="109" alt="Screenshot 2024-02-05 at 11 36 46 AM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/d245b36c-4146-4b62-b59b-68bcf4a713b8">
+</kbd>
+
+Classification report in scikit-learn
+```python
+print(classification_report(y_test, y_pred))
+```
+<kbd><img width="490" alt="Screenshot 2024-02-05 at 11 37 45 AM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/7d91ef68-a7e9-4ab5-9ca7-fee34de48f6b">
+</kbd>
+
+## Logistic regression and the ROC curve
+
+Logistic regression for binary classification
+
+- Logistic regression is used for classification problems
+- Logistic regression outputs probabilities
+- If the probability *p* > 0.5:
+  - The data is labeled `1`
+- If the probability *p* < 0.5:
+  - The data is labeled `0`
+
+
+Linear decision boundary 
+
+<kbd>
+</kbd>
+
+Logistic regression in scikit-learn
+```python
+from skleanr.linear_model import LogisticRegression
+logreg = LogisticRegression()
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+logreg.fit(X_train, y_train)
+y_pred = logreg.predict(X_test)
 ```
 
+Predicting probabilities
 ```python
-
+y_pred_probs = logreg.predict_proba(X_test)[:,1]
+print(y_pred_probs[0]) # 0.089
 ```
 
-```python
+Probability thresholds
 
+- By default, logistic regression threshold = 0.5
+- Not specific to logistic regression
+  - KNN classifiers also have thresholds
+- What happens if we vary the threshold?
+
+The ROC curve
+
+<kbd><img width="547" alt="Screenshot 2024-02-05 at 11 42 27 AM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/2992e16c-77fa-436b-ad7a-ed11a4b3927e">
+</kbd>
+
+Plotting the ROC curve
+```python
+from sklearn.metrics import roc_curve
+fpr, tpr, thresholds = roc_curve(y_test, y_pred_probs)
+plt.plot([0, 1], [0, 1], 'k--')
+plt.plot(fpr, tpr)
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Logistic Regression ROC Curve')
+plt.show()
 ```
+
+ROC AUC in scikit-learn
+```python
+from sklearn.metrics import roc_auc_score
+print(roc_auc_score(y_test, y_pred_probs)) # 0.67
+```
+<kbd><img width="463" alt="Screenshot 2024-02-05 at 11 44 41 AM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/7afbd81d-d4c8-4939-ad96-a9103ff3d24c">
+</kbd>
+
+## Hyperparameter tuning
+
+- Ridge/lasso regression: choosing `alpha`
+- KNN: choosing `n_neighbors`
+- Hyperparameters: parameters we specify before fitting the model
+  - Like `alpha` and `n_neighbors`
+
+Choosing the correct hyperparameters
+
+1. Try lots of different hyperparameter values
+2. Fit all of them separately
+3. See how well they perform
+4. Choose the best performing values
+
+- This is called **hyperparameter tuning**
+- It is essential to use cross-validation to avoid overfitting to the test set
+- We can still split the data and perform cross-validation on the trainng set
+- We withhold the test set for final evaluation
+
+Grid search cross-validation
+
+<kbd>
+</kbd>
+
+GridSearchCV in scikit-learn
+```python
+from sklearn.model_selection import GridSearchCV
+kf = KFold(n_splits=5, shuffle=True, random_state=42)
+param_grid = {'alpha': np.arange(0.0001, 1, 10), 'solver': ['sag', 'lsqr']}
+ridge = Ridge()
+ridge_cv = GridSearchCV(ridge, param_grid, cv=kf)
+ridge_cv.fit(X_train, y_train)
+print(ridge_cv.best_params_, ridge_cv.best_score_)
+```
+<kbd><img width="319" alt="Screenshot 2024-02-05 at 11 49 58 AM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/b5b1965d-163a-4057-826d-d3a044eeabad">
+</kbd>
+
+Limitations and an alternative approach
+
+- 3-fold cross-validation, 1 hyperparameter, 10 total values = 30 fits
+- 10-fold cross-validation, 3 hyperparameter, 30 total values = 900 fits
+
+RandomizedSearchCV
+```python
+from sklearn.model_selection import RandomizedSearchCV
+kf = KFold(n_splits=5, shuffle=True, random_state=42)
+param_grid = {'alpha': np.arange(0.0001, 1, 10), 'solver': ['sag', 'lsqr']}
+ridge = Ridge()
+ridge_cv = RandomizedSearchCV(ridge, param_grid, cv=kf, n_iter=2)
+ridge_cv.fit(X_train, y_train)
+print(ridge_cv.best_params_, ridge_cv.best_score_)
+```
+
+Evaluating on the test set
+```python
+test_score = ridge_cv.score(X_test, y_test)
+print(test_score) # 0.75
+```
+
+# Preprocessing data
+
+scikit-learn requirements
+
+- Numeric data
+- No missing values
+
+- With real-world data:
+  - This is rarely the case
+  - We will often need to preprocess our data first
+
+Dealing with categorical features
+
+- scikit-learn will not accept categorical features by default
+- Need to conver categorical features into numeric values
+- Convert to binary features called dummy variables
+- 0: observation was NOT that category
+- 1: observation was that category
+
+Dummy variables
+
+<kbd><img width="703" alt="Screenshot 2024-02-05 at 11 54 50 AM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/28b12044-8c09-4cb5-b312-5e179cef2209">
+</kbd>
+
+Dealing with categorical features
+
+- scikit-learn: `OneHotEncoder()`
+- pandas: `get_dummies()`
+
+Music dataset
+
+- `popularity`: target variable
+- `genre`: categorica feature
+```python
+print(music.info())
+```
+<kbd><img width="685" alt="Screenshot 2024-02-05 at 11 55 53 AM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/5cd591b2-e5ca-4a44-8e49-b46f14aa0e4b">
+</kbd>
+
+EDA w/categorical feature
+
+<kbd><img width="495" alt="Screenshot 2024-02-05 at 11 56 40 AM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/baa46d94-564c-4938-acb2-c4900c478462">
+</kbd>
+
+Encoding dummy variables
+```python
+import pandas as pd
+music_df = pd.read_csv('music.csv')
+music_dummies = pd.get_dummies(music_df['genre'], drop_first=True)
+print(music_dummies.head())
+
+music_dummies = pd.concat([music_df, music_dummies]), axis=1)
+music_dummies = music_dummies.drop('genre', axis=1)
+
+music_dummies = pd.get_dummies(music_df, drop_first=True)
+print(music_dummies.columns)
+```
+<kbd><img width="658" alt="Screenshot 2024-02-05 at 11 59 38 AM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/d83d4959-7723-4a5b-9304-79a142b160d1">
+</kbd>
+
+<kbd><img width="692" alt="Screenshot 2024-02-05 at 12 00 12 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/99f75227-4eb5-4191-9624-9b21d61d33d3">
+</kbd>
+
+
+Linear regression with dummy variables
+```python
+from sklearn.model_selection import cross_val_score, KFold
+from sklearn.linear_model import LinearRegression
+X = music_dummies.drop('popularity', axis=1).values
+y = music_dummies['popularity'].values
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+kf = KFold(n_splits=5, shuffle=True, random_state=42)
+linreg = LinearRegression()
+linreg_cv = cross_val_score(linreg, X_train, y_train, cv=kf, scoring='neg_mean_squared_error')
+print(np.sqrt(-linreg_cv))
+```
+
+## Handling missing data
+
+- No value for a feature in a particular row
+- This can occur because:
+  - There may have been no observation
+  - The data might be corrupt
+- We need to deal with missing data
+
+Music dataset
+```python
+print(music_df.isna().sum().sort_values())
+```
+<kbd><img width="181" alt="Screenshot 2024-02-05 at 12 04 45 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/076b9a58-1b17-4e9e-b163-6becd5bc28de">
+</kbd>
+
+Dropping missing data
+```python
+music_df = music_df.dropna(subset='genre', 'popularity', 'loudness', 'liveness', 'tempo'])
+print(music_df.isna().sum().sort_values())
+```
+<kbd><img width="170" alt="Screenshot 2024-02-05 at 12 04 50 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/80c904e8-0787-42dd-bfb9-8053ce1d725a">
+</kbd>
+
+Imputing values
+
+- Imputation - use subject-matter expertise to replace missing data with educated guesses
+- Common to use the mean
+- Can also use the median, or another value
+- For categorical values, we typically use the most frequent value - the mode
+- Must split our data first, to avoid *data leakage*
+- Imputers are known as transformers
+
+Imputation with scikit-learn
+```python
+from sklearn.impute import SimpleImputer
+X_cat = music_df['genre'].values.reshape(-1, 1)
+X_num = music_df.drop(['genre', 'popularity'], axis=1).values
+y = music_df['popularity'].values
+X_train_cat, X_test_cat, y_train_cat, y_test_cat = train_test_split(X_cat, y, test_size=0.2, random_state=12)
+X_train_num, X_test_num, y_train_num, y_test_num = train_test_split(X_num, y, test_size=0.2, random_state=12)
+
+imp_cat = SimpleImputer(strategy='most_frequent')
+X_train_cat = imp_cat.fit_transform(X_train_cat)
+X_test_cat = imp_cat.transform(X_test_cat)
+
+imp_num = SimpleImputer()
+X_train_num = imp_num.fit_transform(X_train_num)
+X_test_num = imp_num.transform(X_test_num)
+X_train = np.append(X_train_num, X_train_cat, axis=1)
+X_test = np.append(X_test_num, X_test_cat, axis=1)
+```
+
+Imputing within a pipeline
+```python
+from sklearn.pipeline import Pipeline
+music_df = music_df.dropna(subset=['genre', 'popularity', 'loudness', 'liveness', 'tempo'])
+music_df['genre'] = np.where(music_df['genre'] == 'Rock', 1, 0)
+X = music_df.drop('genre', axis=1).values
+y = music_df['genre'].values
+```
+```python
+steps = [('imputation', SimpleImputer()), ('logistic_regression', LogisticRegression())]
+pipeline = Pipeline(steps)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+pipeline.fit(X_train, y_train)
+pipeline.score(X_test, y_test) # 0.75
+```
+
+## Centering and scaling
+
+Why scale our data?
+
+- Many models use some form of distance to inform them
+- Features on larger scales can disproportionately influence the model
+- Example: KNN uses distance explicitly when making predictions
+- We want features to be on a similar scale
+- Normalizing or standardizing (scaling and centering)
+
+```python
+print(music_df['duration_ms', 'loudness', 'speechiness']].describe())
+```
+<kbd><img width="469" alt="Screenshot 2024-02-05 at 12 16 23 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/d3e1d1aa-dd91-4539-a844-053016f20119">
+</kbd>
+
+How to scale our data 
+
+- Subtract the mean and divide by variance
+  - All features are centered around zero and have a variance of one
+  - This is called **standardization**
+- Can also subtract the minimum and divide by the range
+  - Minimum zero and maximum one
+- Can also *normalize* so the data ranges from -1 to +1
+
+Scaling in scikit-learn
+```python
+from sklearn.preprocessing import StandardScaler
+X = music_df.drop('genre', axis=1).values
+y = music_df['genre'].values
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+print(np.mean(X), np.std(X))
+print(np.mean(X_train_scaled)), np.std(X_train_scaled))
+```
+
+Scaling in a pipeline
+```python
+steps = [('scaler', StandardScaler()), ('knn', KNeighborsClassifier(n_neighbors=6))]
+pipeline = Pipeline(steps)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=21)
+knn_scaled = pipeline.fit(X_train, y_train)
+y_pred = knn_scaled.predict(X_test)
+print(knn_scaled.score(X_test, y_test)) # 0.81
+```
+
+Comparing performance using unscaled data
+```python
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=21)
+knn_unscaled = KNeighborsClassifier(n_neighbors=6).fit(X_train, y_train)
+print(knn_unscaled.score(X_test, y_test)) # 0.53
+```
+
+CV and scaling in a pipeline
+```python
+from sklearn.model_selection import GridSearchCV
+steps = [('scaler', StandardScaler()), ('knn', KNeighborsClassifier())]
+pipeline = Pipeline(steps)
+parameters = {'knn__n_neighbors': np.arange(1, 50)}
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=21)
+cv = GridSearchCV(pipeline, param_grid=parameters)
+cv.fit(X_train, y_train)
+y_pred = cv.predict(X_test)
+print(cv.best_score_) # 0.81
+print(cv.best_params_) # {'knn__n_neighbors': 12}
+```
+
+## Evaluating multiple models
+
+Different models for different problems
+
+- Size of the dataset
+  - Fewer features = simpler model, faster training time
+  - Some models require large amounts of data to perform well
+- Interpretability
+  - Some models are easier to explain, which can be important for stakeholders
+  - Linear regression has high interpretability, as we can understand the coefficients
+- Flexibility
+  - May improve accuracy, by making fewer assumptions about data
+  - KNN is a more flexible model, doesn't assume any linear relationships
+ 
+It's all in the metrics
+
+- Regression model performance:
+  - RMSE
+  - R-squared
+- Classification model performance:
+  - Accuracy
+  - Confusion matrix
+  - Precision, recall, F1-score
+  - ROC AUC
+- Train several models and evaluate performance out of the box
+
+A note on scaling
+
+- Models affected by scaling:
+  - KNN
+  - Linear Regression (plus Ridge, Lasso)
+  - Logistic Regression
+  - Artificual Neural Network
+- Best to scale our data before evaluating models
+
+Evaluating classification models
+```python
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import cross_val_score, KFold, train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+X = music.drop('genre', axis=1).values
+y = music['genre'].values
+X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+```
+```python
+models =
+results = []
+for model in models.values():
+  kf = KFold(n_splits=6, random_state=42, shuffle=True)
+  cv_results = cross_val_score(model, X_train_scaled, y_train, cv=kf)
+  results.append(cv_results)
+plt.boxplot(results, labels=models.keys())
+plt.show()
+```
+<kbd><img width="489" alt="Screenshot 2024-02-05 at 12 33 40 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/2d4c1c6e-5b8f-47a9-83af-3423367e60ab">
+</kbd>
+
+Test set performance
+```python
+for name, model in models.items():
+  model.fit(X_train_scaled, y_train)
+  test_score = model.score(X_test_scaled, y_test)
+  print(f"{} Test Set Accuracy: {}".format(name, test_score))
+```
+<kbd><img width="417" alt="Screenshot 2024-02-05 at 12 34 53 PM" src="https://github.com/mattamx/DataScience_quick_guides/assets/107958646/c7683fa6-bd5f-4d32-949a-8b993188c720">
+</kbd>
